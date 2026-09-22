@@ -119,7 +119,10 @@ async def chat_stream(
             if await stopped():
                 return
             visible_text = f"⚠️ {text}"
-            save_message(user_id, data.conversation_id, "assistant", visible_text)
+            try:
+                save_message(user_id, data.conversation_id, "assistant", visible_text)
+            except Exception:
+                pass
             completed = True
             yield _event("token", {"text": visible_text})
             yield _event("done", {"model": display_model_name()})
@@ -141,8 +144,8 @@ async def chat_stream(
         except NOVAServiceError as error:
             async for event in show_error(str(error)):
                 yield event
-        except Exception:
-            async for event in show_error("NOVA could not complete that request. Please try again."):
+        except Exception as error:
+            async for event in show_error(str(error) or "NOVA could not complete that request. Please try again."):
                 yield event
         finally:
             if not completed and await stopped():
@@ -151,10 +154,13 @@ async def chat_stream(
                 ACTIVE_REQUESTS.discard(request_key)
                 CANCELLED_REQUESTS.discard(request_key)
 
+    headers = {"Cache-Control": "no-store", "X-Accel-Buffering": "no"}
+    if "x-nova-session" in response.headers:
+        headers["x-nova-session"] = response.headers["x-nova-session"]
     streamed = StreamingResponse(
         generate(),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+        headers=headers,
     )
     for cookie in response.headers.getlist("set-cookie"):
         streamed.headers.append("set-cookie", cookie)

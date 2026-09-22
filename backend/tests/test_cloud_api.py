@@ -70,3 +70,29 @@ def test_rejects_invalid_uploads(tmp_path, monkeypatch):
     with TestClient(app) as browser:
         invalid = browser.post("/chat/stream", json={"conversation_id": "upload-chat", "message": "", "document": "not-a-pdf"})
         assert invalid.status_code == 422
+
+
+def test_multi_turn_chat_with_header_session(tmp_path, monkeypatch):
+    configure_database(f"sqlite:///{tmp_path / 'multi-turn.db'}")
+    initialize_database()
+    monkeypatch.setattr(chat, "stream_response", _fake_stream)
+
+    client = TestClient(app)
+    # Turn 1
+    resp1 = client.post("/chat/stream", json={"conversation_id": "conv-1", "message": "First question"})
+    assert resp1.status_code == 200
+    token = resp1.headers.get("x-nova-session")
+    assert token is not None
+
+    # Turn 2: Using x-nova-session header
+    resp2 = client.post(
+        "/chat/stream",
+        json={"conversation_id": "conv-1", "message": "Second question"},
+        headers={"x-nova-session": token},
+    )
+    assert resp2.status_code == 200
+    assert "event: token" in resp2.text
+
+    history = client.get("/conversations/conv-1/messages", headers={"x-nova-session": token})
+    assert history.status_code == 200
+    assert len(history.json()) == 4

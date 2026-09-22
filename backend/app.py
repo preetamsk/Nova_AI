@@ -21,8 +21,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=list(settings.frontend_origins),
     allow_credentials=True,
-    allow_methods=["GET", "POST", "DELETE"],
-    allow_headers=["Content-Type"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "x-nova-session", "authorization"],
+    expose_headers=["x-nova-session"],
     max_age=600,
 )
 

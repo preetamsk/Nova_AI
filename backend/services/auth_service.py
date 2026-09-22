@@ -31,15 +31,17 @@ def _read_session(token: str | None) -> str | None:
     return value if isinstance(value, str) and value else None
 
 
-def _write_session(response: Response, user_id: str) -> None:
+def _write_session(response: Response, user_id: str, secure: bool = False) -> None:
     settings = get_settings()
+    token = _serializer().dumps(user_id)
+    response.headers["x-nova-session"] = token
     response.set_cookie(
         key=settings.session_cookie_name,
-        value=_serializer().dumps(user_id),
+        value=token,
         max_age=settings.session_ttl_seconds,
         httponly=True,
-        secure=settings.cookie_secure,
-        samesite="none" if settings.cookie_secure else "lax",
+        secure=secure,
+        samesite="none" if secure else "lax",
         path="/",
     )
 
@@ -47,9 +49,12 @@ def _write_session(response: Response, user_id: str) -> None:
 def current_user_id(request: Request, response: Response) -> str:
     """Return the current opaque user id, issuing a secure guest session if needed."""
     settings = get_settings()
-    user_id = _read_session(request.cookies.get(settings.session_cookie_name))
+    token = request.headers.get("x-nova-session") or request.cookies.get(settings.session_cookie_name)
+    user_id = _read_session(token)
     if user_id:
+        response.headers["x-nova-session"] = token
         return user_id
     user_id = claim_legacy_local_profile() or secrets.token_urlsafe(24)
-    _write_session(response, user_id)
+    is_secure = settings.cookie_secure or request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https"
+    _write_session(response, user_id, secure=is_secure)
     return user_id
