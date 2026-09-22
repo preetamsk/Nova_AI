@@ -13,6 +13,6 @@ if ($Stop) {
     exit 0
 }
 
-& $tailscale funnel --bg 3000
+& $tailscale funnel --bg 8000
 & $tailscale funnel status
-Write-Host 'Share the HTTPS address shown above only while NOVA is running on this laptop.'
+Write-Host 'Backend funnel is active at https://preethu.tailff2d27.ts.net/ for your Vercel frontend.'
