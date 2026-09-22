@@ -74,8 +74,8 @@ def get_settings() -> Settings:
         ollama_text_model=os.getenv("OLLAMA_TEXT_MODEL", "qwen2.5:1.5b").strip() or "qwen2.5:1.5b",
         ollama_vision_model=os.getenv("OLLAMA_VISION_MODEL", "moondream:latest").strip() or "moondream:latest",
         ollama_keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "5m").strip() or "5m",
-        ollama_num_ctx=_integer("OLLAMA_NUM_CTX", 2048, 256),
-        ollama_num_predict=_integer("OLLAMA_NUM_PREDICT", 384, 64),
+        ollama_num_ctx=_integer("OLLAMA_NUM_CTX", 4096, 512),
+        ollama_num_predict=_integer("OLLAMA_NUM_PREDICT", 2048, 256),
     )
 
 

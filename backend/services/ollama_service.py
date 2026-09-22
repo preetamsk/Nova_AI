@@ -45,9 +45,13 @@ def _available(configured: str, installed: list[str]) -> str | None:
     )
 
 
-def _select_model(vision: bool) -> str:
+def _select_model(vision: bool, requested_model: str | None = None) -> str:
     settings = get_settings()
     installed = _installed_models()
+    if not vision and requested_model:
+        selected = _available(requested_model, installed)
+        if selected:
+            return selected
     preferred = settings.ollama_vision_model if vision else settings.ollama_text_model
     selected = _available(preferred, installed)
     if selected:
@@ -66,7 +70,13 @@ def _messages(history: list[ChatMessage], image: str | None, document: str | Non
     messages: list[dict[str, object]] = [
         {
             "role": "system",
-            "content": "You are NOVA, a helpful personal AI assistant. Give direct, accurate answers. Use code fences for code.",
+            "content": (
+                "You are NOVA, an expert personal AI assistant. "
+                "Provide complete, well-structured, clear, and technically accurate responses. "
+                "Never stop, abbreviate, or truncate explanations, math formulas, or code midway. "
+                "When writing code, always provide full, working implementations within proper markdown code fences with the language specified. "
+                "Structure technical answers logically using clear headings, bullet points, or step-by-step instructions where appropriate, and always bring your thoughts to a complete conclusion."
+            ),
         }
     ]
     recent = history[-12:]
@@ -93,15 +103,19 @@ def _messages(history: list[ChatMessage], image: str | None, document: str | Non
 
 
 def stream_response(
-    history: list[ChatMessage], image: str | None, document: str | None, document_name: str | None
+    history: list[ChatMessage],
+    image: str | None,
+    document: str | None,
+    document_name: str | None,
+    model_name: str | None = None,
 ) -> Iterator[str]:
     settings = get_settings()
     messages, needs_vision = _messages(history, image, document, document_name)
-    model = _select_model(needs_vision)
+    model = _select_model(needs_vision, model_name)
     options: dict[str, object] = {
-        "temperature": 0.35,
-        "num_ctx": 768 if needs_vision else settings.ollama_num_ctx,
-        "num_predict": 256 if needs_vision else settings.ollama_num_predict,
+        "temperature": 0.4,
+        "num_ctx": 2048 if needs_vision else settings.ollama_num_ctx,
+        "num_predict": 1024 if needs_vision else settings.ollama_num_predict,
     }
     payload = {
         "model": model,

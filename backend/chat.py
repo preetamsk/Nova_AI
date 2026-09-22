@@ -130,7 +130,7 @@ async def chat_stream(
         try:
             history = get_messages(user_id, data.conversation_id)
             answer = ""
-            for token in stream_response(history, image, document, data.document_name):
+            for token in stream_response(history, image, document, data.document_name, data.model):
                 if await stopped():
                     return
                 answer += token
