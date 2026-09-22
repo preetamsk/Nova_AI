@@ -1,0 +1,10 @@
+@import "./globals.before-remove-welcome-logo.css";
+@import "./nova-layout.css";
+@import "./nova-density-75.css";
+@import "./nova-brand-theme.css";
+@import "./nova-logo-plain.css";
+@import "./nova-logo-transparent.css";
+@import "./nova-logo-asset.css";
+
+/* Keep branding in navigation only; the chat/welcome area stays logo-free. */
+.welcome .nova-mark { display: none; }

@@ -1,0 +1,75 @@
+/* Stable desktop proportions: a spacious reading area without oversized UI. */
+@media (min-width: 1041px) {
+  .nova-shell {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .sidebar {
+    width: 264px;
+    flex-basis: 264px;
+    padding: 23px 17px 18px;
+  }
+
+  .sidebar-brand {
+    margin: 12px 0 38px;
+  }
+
+  .sidebar-brand .nova-mark {
+    width: 212px;
+    height: 58px;
+  }
+
+  .topbar {
+    height: 98px;
+    flex-basis: 98px;
+    padding-inline: 38px;
+  }
+
+  .topbar-brand .nova-mark.compact {
+    width: 174px;
+    height: 45px;
+  }
+
+  .chat-scroll {
+    padding: 34px clamp(32px, 6vw, 112px) 22px;
+  }
+
+  .welcome {
+    max-width: 780px;
+    padding: clamp(45px, 8vh, 98px) 0 20px;
+  }
+
+  .welcome > p {
+    margin-bottom: 37px;
+  }
+
+  .quick-prompts {
+    width: min(100%, 732px);
+    gap: 12px;
+  }
+
+  .quick-prompts button {
+    min-height: 157px;
+    padding: 25px 20px;
+  }
+
+  .composer-zone {
+    padding: 8px clamp(32px, 6vw, 112px) 19px;
+  }
+
+  .composer {
+    width: min(100%, 990px);
+    min-height: 86px;
+  }
+}
+
+@media (min-width: 1041px) and (max-height: 760px) {
+  .welcome {
+    padding-top: 30px;
+  }
+
+  .quick-prompts button {
+    min-height: 128px;
+  }
+}

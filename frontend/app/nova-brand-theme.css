@@ -1,0 +1,40 @@
+/* Turn the supplied black-canvas wordmark into a deliberate NOVA brand tile. */
+.nova-wordmark {
+  overflow: hidden;
+  border: 1px solid #28364d;
+  border-radius: 9px;
+  background:
+    radial-gradient(circle at 50% 105%, #5031c955, transparent 48%),
+    linear-gradient(135deg, #121b2b, #070b13 62%);
+  box-shadow: 0 5px 16px #0412258a, inset 0 1px #ffffff12;
+}
+
+.nova-wordmark > svg {
+  filter: brightness(1.1) contrast(1.06);
+  mix-blend-mode: screen;
+}
+
+/* Light mode keeps the NOVA artwork readable inside the same premium tile. */
+html.nova-light .nova-wordmark {
+  border-color: #b6c7e5;
+  background:
+    radial-gradient(circle at 50% 112%, #8064e266, transparent 48%),
+    linear-gradient(135deg, #18243a, #09101c 62%);
+  box-shadow: 0 5px 16px #536a9b35, inset 0 1px #ffffff24;
+}
+
+/* The composer inherits the theme now, rather than retaining its dark gradient. */
+html.nova-light .chat-scroll,
+html.nova-light .composer-zone {
+  background: #fbfcff;
+}
+
+html.nova-light .composer-zone {
+  background: linear-gradient(transparent, #fbfcff 16%);
+}
+
+html.nova-light .drop-overlay {
+  background: #eef5ffed;
+  border-color: #7a9ce9;
+  color: #355baf;
+}

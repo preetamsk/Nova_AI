@@ -1,0 +1,6 @@
+/* The wordmark now has a real alpha channel; render it without blending. */
+.nova-wordmark > svg,
+html.nova-light .nova-wordmark > svg {
+  filter: none;
+  mix-blend-mode: normal;
+}

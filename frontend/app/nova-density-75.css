@@ -1,0 +1,172 @@
+/*
+ * 75% interface density at normal browser zoom.
+ * Dimensions are deliberately reduced in CSS; no page transform or browser
+ * zoom is used, so scrolling, focus, camera access, and hit testing remain
+ * native and reliable.
+ */
+:root { --nova-density: 0.75; }
+
+html { font-size: 75%; }
+body { font-size: 12px; }
+
+.nova-shell { padding: 9px; gap: 9px; }
+.sidebar, .chat-panel { border-radius: 21px; }
+.sidebar, .chat-panel { min-height: calc(100dvh - 18px); }
+
+.sidebar {
+  width: 198px;
+  flex-basis: 198px;
+  padding: 17px 13px 14px;
+}
+
+.sidebar-brand { gap: 10px; margin: 9px 0 29px; font-size: 18px; }
+.nova-mark { width: 165px; height: 44px; }
+.nova-mark.compact { width: 131px; height: 34px; }
+.sidebar-brand .nova-mark { width: 159px; height: 44px; }
+
+.new-chat { height: 40px; padding-inline: 15px; gap: 11px; border-radius: 11px; font-size: 14px; }
+.new-chat svg { width: 15px; height: 15px; }
+.section-label { margin: 21px 8px 8px; font-size: 8px; }
+.conversation, .sidebar-footer button { padding: 10px 8px; gap: 9px; border-radius: 8px; }
+.conversation-dot { width: 11px; height: 11px; border-radius: 3px; }
+.empty-history { padding: 4px 8px; font-size: 10px; }
+.sidebar-footer { padding-top: 11px; }
+.sidebar-footer button { font-size: 11px; }
+.sidebar-footer button svg { width: 14px; height: 14px; }
+
+.topbar { height: 74px; flex-basis: 74px; padding-inline: 29px; }
+.topbar-brand { gap: 11px; }
+.topbar-brand strong { font-size: 17px; }
+.topbar-brand span { margin-top: 3px; font-size: 10px; }
+.topbar-actions { gap: 8px; }
+.topbar-actions button { width: 42px; height: 42px; border-radius: 12px; }
+.topbar-actions button svg { width: 16px; height: 16px; }
+
+.chat-scroll { padding: 26px clamp(14px, 5.25vw, 84px) 17px; }
+.welcome { max-width: 585px; padding: clamp(34px, 6vh, 74px) 0 15px; }
+.welcome h1 { font-size: clamp(24px, 3vw, 34px); }
+.welcome > p { margin: 11px 0 28px; font-size: 18px; }
+.quick-prompts { width: min(100%, 549px); gap: 9px; }
+.quick-prompts button { min-height: 118px; padding: 19px 15px; border-radius: 12px; font-size: 12px; }
+.prompt-icon { width: 14px; height: 14px; margin-bottom: 15px; }
+
+.message-list { width: min(698px, 100%); gap: 18px; padding-bottom: 9px; }
+.message-bubble { padding: 11px 14px; border-radius: 14px; font-size: 12px; }
+.message-bubble.with-image { padding: 8px; min-width: min(100%, 300px); }
+.message-bubble.with-image p { padding: 6px 6px 3px; }
+.image-card { border-radius: 9px; }
+.image-card > div { height: 26px; padding-inline: 8px; gap: 5px; font-size: 9px; }
+.image-card > div svg { width: 11px; height: 11px; }
+.image-card img { max-width: 428px; max-height: 323px; }
+.document-card { gap: 8px; padding: 4px 3px 9px; }
+.document-card svg { width: 14px; height: 14px; }
+.document-card b { font-size: 10px; }
+.document-card span { font-size: 9px; }
+.assistant-actions { gap: 2px; padding: 5px 2px 0; }
+.assistant-actions button { width: 24px; height: 22px; border-radius: 6px; }
+.assistant-actions button svg { width: 12px; height: 12px; }
+
+.composer-zone { padding: 6px clamp(14px, 5.25vw, 84px) 14px; }
+.attachment-tray { width: min(100%, 742px); margin-bottom: 8px; gap: 6px; }
+.attachment { gap: 7px; border-radius: 8px; padding: 5px 6px; font-size: 9px; }
+.attachment span { max-width: 165px; }
+.attachment svg { width: 14px; height: 14px; }
+.image-attachment img { width: 24px; height: 24px; border-radius: 5px; }
+.composer { width: min(100%, 742px); min-height: 65px; padding: 6px 8px; gap: 8px; border-radius: 34px; }
+.composer-tools { padding: 0 7px 0 4px; }
+.composer-tools button { width: 29px; height: 29px; border-radius: 8px; }
+.composer-tools button svg { width: 15px; height: 15px; }
+.composer textarea { max-height: 114px; padding: 10px 6px; font-size: 14px; }
+.send { width: 44px; height: 44px; }
+.send svg { width: 16px; height: 16px; }
+.send.stop span { width: 11px; height: 11px; }
+.drop-hint, .disclaimer { margin-top: 6px; font-size: 9px; }
+.disclaimer { margin-top: 8px; font-size: 8px; }
+
+.nova-code-block { border-radius: 9px; }
+.nova-code-block > header { min-height: 29px; padding: 0 8px 0 10px; font-size: 9px; }
+.nova-copy-code { min-height: 20px; padding-inline: 7px; border-radius: 5px; font-size: 9px; }
+.nova-code-block pre { max-height: 270px; padding: 10px 11px; font-size: 10px; }
+
+.modal-backdrop { padding: 15px; }
+.history-modal, .camera-modal { width: min(420px, 100%); max-height: min(488px, 90vh); border-radius: 15px; }
+.history-modal header, .camera-modal header { gap: 8px; padding: 11px; }
+.history-modal header > button, .camera-modal header button { width: 29px; height: 29px; border-radius: 8px; }
+.history-modal header > button svg, .camera-modal header button svg { width: 14px; height: 14px; }
+.history-modal input { padding: 7px 2px; font-size: 12px; }
+.history-modal > div { padding: 6px; }
+.history-modal > div > button { padding: 11px 9px; border-radius: 8px; }
+.camera-modal video { max-height: 45vh; }
+.capture { margin: 11px; width: calc(100% - 22px); height: 34px; border-radius: 9px; }
+
+/* At 100% browser zoom, this is the desktop breakpoint Chrome reaches at 75%. */
+@media (min-width: 781px) {
+  .sidebar {
+    position: relative;
+    z-index: auto;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+  }
+
+  .sidebar:not(.open) {
+    width: 0;
+    min-width: 0;
+    flex-basis: 0;
+    padding-inline: 0;
+    border-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .quick-prompts { grid-template-columns: repeat(4, 1fr); }
+  .message-row { max-width: 82%; }
+}
+
+@media (max-width: 780px) {
+  .sidebar {
+    position: fixed;
+    z-index: 12;
+    left: 9px;
+    top: 9px;
+    bottom: 9px;
+    width: min(198px, calc(100vw - 18px));
+    min-height: 0;
+    transform: translateX(-115%);
+  }
+
+  .sidebar.open { transform: translateX(0); }
+  .quick-prompts { grid-template-columns: repeat(2, 1fr); }
+  .quick-prompts button { min-height: 84px; }
+  .message-row { max-width: 92%; }
+}
+
+/* The original mobile layout also receives the same 75% density. */
+@media (max-width: 465px) {
+  .nova-shell { padding: 0; }
+  .chat-panel { min-height: 100dvh; height: 100dvh; border-radius: 0; border-inline: 0; }
+  .topbar { height: 56px; flex-basis: 56px; padding-inline: 11px; }
+  .topbar-brand .nova-mark.compact { width: 29px; height: 29px; }
+  .topbar-actions { gap: 3px; }
+  .topbar-actions button { width: 32px; height: 32px; border-radius: 9px; }
+  .topbar-actions button svg { width: 14px; height: 14px; }
+  .chat-scroll { padding: 15px 11px; }
+  .welcome { padding-top: 38px; }
+  .welcome > p { font-size: 14px; }
+  .quick-prompts { grid-template-columns: 1fr; }
+  .quick-prompts button { min-height: 62px; padding: 14px; }
+  .prompt-icon { display: inline; vertical-align: -3px; margin: 0 6px 0 0; }
+  .message-row { max-width: 100%; }
+  .composer-zone { padding: 6px 8px 11px; }
+  .composer { min-height: 53px; border-radius: 20px; }
+  .composer-tools { padding-inline: 2px; }
+  .composer-tools button { width: 23px; height: 26px; }
+  .composer-tools button svg { width: 14px; height: 14px; }
+  .composer textarea { padding: 8px 2px; font-size: 12px; }
+  .send { width: 35px; height: 35px; }
+  .drop-hint { font-size: 8px; }
+  .sidebar { width: min(225px, calc(100vw - 18px)); }
+  .attachment span { max-width: 109px; }
+}

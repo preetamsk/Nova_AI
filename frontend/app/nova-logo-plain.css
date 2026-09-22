@@ -1,0 +1,13 @@
+/* Display the supplied NOVA artwork exactly as a plain PNG. */
+.nova-wordmark {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.nova-wordmark > svg {
+  filter: none;
+  mix-blend-mode: normal;
+}

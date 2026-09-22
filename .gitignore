@@ -1,0 +1,34 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+
+# Python environments and bytecode
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local settings and secrets. Examples are safe to commit.
+.env
+.env.*
+!.env.example
+!frontend/.env.local.example
+*.local
+
+# Runtime data
+backend/nova.db
+backend/nova.db-*
+tmp/
+output/
+
+# Editor, operating system, and log files
+.vscode/*.log
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Local safety copies retained during development
+*.before-*
+*.reconstruction-backup.txt

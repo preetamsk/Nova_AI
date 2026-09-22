@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: nova-ai-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      # Safe first-deploy value: replace with the Vercel URL after it exists.
+      - key: FRONTEND_ORIGINS
+        value: https://placeholder.invalid
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: MAX_UPLOAD_BYTES
+        value: 8388608
+      - key: RATE_LIMIT_PER_MINUTE
+        value: 30
