@@ -21,6 +21,9 @@ backend/nova.db
 backend/nova.db-*
 tmp/
 output/
+ollama-models/
+*.gguf
+*.bin
 
 # Editor, operating system, and log files
 .vscode/*.log
