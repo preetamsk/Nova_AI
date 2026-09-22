@@ -7,6 +7,8 @@ export default defineConfig([
     rules: {
       // Initial local-history hydration is intentionally asynchronous on mount.
       "react-hooks/set-state-in-effect": "off",
+      // Client-captured canvas images and local file previews use standard img tags.
+      "@next/next/no-img-element": "off",
     },
   },
   globalIgnores([

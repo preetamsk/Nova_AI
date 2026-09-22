@@ -2,6 +2,7 @@
 node_modules/
 .next/
 out/
+*.tsbuildinfo
 
 # Python environments and bytecode
 .venv/
