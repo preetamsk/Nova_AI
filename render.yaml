@@ -16,9 +16,9 @@ services:
         sync: false
       - key: DATABASE_URL
         sync: false
-      # Safe first-deploy value: replace with the Vercel URL after it exists.
+      # Production Vercel URL:
       - key: FRONTEND_ORIGINS
-        value: https://placeholder.invalid
+        value: https://frontend-six-beta-80.vercel.app
       - key: SESSION_SECRET
         generateValue: true
       - key: OPENAI_MODEL
