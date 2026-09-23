@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Check, Copy, FileText, ImageIcon, ImagePlus, Menu, Mic, MicOff, Moon, Plus, Search, Send, Settings, Sparkles, ThumbsDown, ThumbsUp, Trash2, User, X } from "lucide-react";
+import { Camera, Check, Copy, FileText, ImageIcon, ImagePlus, LogOut, Menu, Mic, MicOff, Moon, Plus, Search, Send, Settings, Sparkles, ThumbsDown, ThumbsUp, Trash2, User, X } from "lucide-react";
 import { ChangeEvent, DragEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import NovaMark from "@/components/NovaMark";
 import GuestAuthModal, { CURRENT_USER_KEY, NovaUser } from "@/components/GuestAuthModal";
@@ -136,6 +136,18 @@ export default function Home() {
     const userChats = getStoredChats(user.phone);
     setConversations(userChats.map((c) => ({ id: c.id, title: c.title, updated_at: c.updated_at })));
     newChat();
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem(CURRENT_USER_KEY);
+    } catch {
+      // LocalStorage blocked
+    }
+    setCurrentUser(null);
+    setConversations([]);
+    newChat();
+    setAuthModalOpen(true);
   };
 
   const clearAttachments = () => { setImage(undefined); setImageName(""); setDocumentFile(undefined); };
@@ -403,10 +415,9 @@ export default function Home() {
         <div className="sidebar-user-section">
           <div
             className="sidebar-user-card"
-            onClick={() => setAuthModalOpen(true)}
             title="Switch Profile / Change Account"
           >
-            <div className="sidebar-user-info">
+            <div className="sidebar-user-info" onClick={() => setAuthModalOpen(true)}>
               <span className="topbar-user-avatar">
                 {currentUser ? currentUser.name.charAt(0).toUpperCase() : "G"}
               </span>
@@ -417,7 +428,21 @@ export default function Home() {
                 </span>
               </div>
             </div>
-            <span style={{ fontSize: "11px", color: "#818cf8", fontWeight: 600 }}>Switch</span>
+            {currentUser ? (
+              <button
+                type="button"
+                className="sidebar-logout-btn"
+                title="Log Out"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLogout();
+                }}
+              >
+                <LogOut size={16} />
+              </button>
+            ) : (
+              <span onClick={() => setAuthModalOpen(true)} style={{ fontSize: "11px", color: "#818cf8", fontWeight: 600, cursor: "pointer" }}>Verify</span>
+            )}
           </div>
         </div>
 
@@ -426,9 +451,15 @@ export default function Home() {
             <Settings size={18} />
             Profile
           </button>
+          {currentUser && (
+            <button onClick={handleLogout} title="Log Out">
+              <LogOut size={18} />
+              Log Out
+            </button>
+          )}
           <button onClick={() => void clearChat()}>
             <Trash2 size={18} />
-            Clear Chat
+            Clear
           </button>
         </div>
       </aside>
@@ -449,15 +480,25 @@ export default function Home() {
 
             {/* Profile badge in topbar */}
             {currentUser ? (
-              <button
-                type="button"
-                className="topbar-user-pill"
-                title={`Logged in as ${currentUser.name} (${currentUser.phone}) - Click to switch profile`}
-                onClick={() => setAuthModalOpen(true)}
-              >
-                <span className="topbar-user-avatar">{currentUser.name.charAt(0).toUpperCase()}</span>
-                <span className="topbar-user-name">{currentUser.name}</span>
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="topbar-user-pill"
+                  title={`Logged in as ${currentUser.name} (${currentUser.phone}) - Click to switch profile`}
+                  onClick={() => setAuthModalOpen(true)}
+                >
+                  <span className="topbar-user-avatar">{currentUser.name.charAt(0).toUpperCase()}</span>
+                  <span className="topbar-user-name">{currentUser.name}</span>
+                </button>
+                <button
+                  type="button"
+                  className="topbar-logout-btn"
+                  title="Log Out"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={16} />
+                </button>
+              </>
             ) : (
               <button
                 type="button"
@@ -701,6 +742,7 @@ export default function Home() {
         currentUser={currentUser}
         onSuccess={handleUserVerified}
         onClose={() => setAuthModalOpen(false)}
+        onLogout={handleLogout}
       />
     </main>
   );

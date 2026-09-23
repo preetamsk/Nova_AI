@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Phone, ShieldCheck, Sparkles, User, X } from "lucide-react";
+import { ArrowRight, LogOut, Phone, ShieldCheck, Sparkles, User, X } from "lucide-react";
 
 export interface NovaUser {
   name: string;
@@ -14,6 +14,7 @@ interface GuestAuthModalProps {
   currentUser?: NovaUser | null;
   onSuccess: (user: NovaUser) => void;
   onClose?: () => void;
+  onLogout?: () => void;
 }
 
 export const CURRENT_USER_KEY = "nova_current_user";
@@ -24,6 +25,7 @@ export default function GuestAuthModal({
   currentUser,
   onSuccess,
   onClose,
+  onLogout,
 }: GuestAuthModalProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -250,6 +252,20 @@ export default function GuestAuthModal({
             <ArrowRight size={17} />
           </button>
         </form>
+
+        {currentUser && onLogout && (
+          <div>
+            <button
+              type="button"
+              className="guest-logout-btn"
+              onClick={onLogout}
+              title="Log out of current account"
+            >
+              <LogOut size={14} />
+              <span>Log out of {currentUser.name}</span>
+            </button>
+          </div>
+        )}
 
         <div className="guest-footer-note">
           <ShieldCheck size={13} style={{ display: "inline", verticalAlign: "-2px", marginRight: "4px" }} />

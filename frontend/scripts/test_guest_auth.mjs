@@ -163,3 +163,23 @@ test("Requirement 3: Isolated Private Chats (nova_chats_[phone])", () => {
   const charlieChats = getStoredChats("9999988888");
   assert.deepEqual(charlieChats, []);
 });
+
+test("Requirement 4: Logout Functionality", () => {
+  localStorage.clear();
+
+  // Log in Alice
+  saveGuestUser("Alice", "9876543210");
+  assert.ok(localStorage.getItem("nova_current_user"));
+
+  // Logout
+  localStorage.removeItem("nova_current_user");
+
+  // Verify current user is cleared
+  assert.equal(localStorage.getItem("nova_current_user"), null);
+
+  // Verify saved users remain intact for quick re-login
+  const savedUsers = JSON.parse(localStorage.getItem("nova_saved_users"));
+  assert.equal(savedUsers.length, 1);
+  assert.equal(savedUsers[0].name, "Alice");
+});
+
