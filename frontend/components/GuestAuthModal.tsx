@@ -157,9 +157,17 @@ export default function GuestAuthModal({
           </button>
         )}
 
-        {/* Indigo Logo Box (rounded-xl, indigo background) */}
-        <div className="guest-logo-box">
-          <Sparkles />
+        {/* Nova AI Clear Brand Logo */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+          <img
+            src="/nova-wordmark-transparent.png"
+            alt="NOVA AI"
+            style={{
+              height: "44px",
+              width: "auto",
+              filter: "drop-shadow(0 4px 20px rgba(99, 102, 241, 0.45))",
+            }}
+          />
         </div>
 
         <h2 className="guest-modal-title">Verify Guest Access</h2>
