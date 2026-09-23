@@ -177,10 +177,10 @@ export default function GuestAuthModal({
           Enter your details to unlock a personalized and private AI experience.
         </p>
 
-        {/* Smart Recognition: Quick-select chips for returning visitors */}
-        {savedUsers.length > 0 && (
+        {/* Only show quick switch chips if an existing user is already authenticated */}
+        {currentUser && savedUsers.length > 0 && (
           <div className="guest-saved-section">
-            <span className="guest-saved-label">Quick Select Saved Profile</span>
+            <span className="guest-saved-label">Quick Switch Profile</span>
             <div className="guest-chips-container">
               {savedUsers.map((u) => {
                 const isSelected = selectedUserPhone === u.phone;
@@ -204,7 +204,7 @@ export default function GuestAuthModal({
         )}
 
         {/* Verification Form */}
-        <form className="guest-form" onSubmit={handleComplete}>
+        <form className="guest-form" onSubmit={handleComplete} autoComplete="off">
           <div className="guest-field-group">
             <label htmlFor="guest-name-input" className="guest-field-label">
               Full Name
@@ -213,11 +213,17 @@ export default function GuestAuthModal({
               <User className="guest-input-icon" />
               <input
                 id="guest-name-input"
+                name="private_guest_name"
                 type="text"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="words"
+                spellCheck={false}
+                data-lpignore="true"
                 autoFocus={!currentUser}
                 required
                 className="guest-input"
-                placeholder="e.g. Preetam Kumar"
+                placeholder="Enter your name"
                 value={name}
                 onChange={(e) => handleManualNameChange(e.target.value)}
               />
@@ -232,10 +238,14 @@ export default function GuestAuthModal({
               <Phone className="guest-input-icon" />
               <input
                 id="guest-phone-input"
+                name="private_guest_phone"
                 type="tel"
+                autoComplete="off"
+                autoCorrect="off"
+                data-lpignore="true"
                 required
                 className="guest-input"
-                placeholder="e.g. 9876543210"
+                placeholder="Enter 10-digit phone number"
                 value={phone}
                 onChange={(e) => handleManualPhoneChange(e.target.value)}
               />

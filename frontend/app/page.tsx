@@ -141,12 +141,18 @@ export default function Home() {
   const handleLogout = () => {
     try {
       localStorage.removeItem(CURRENT_USER_KEY);
+      localStorage.removeItem("nova_saved_users");
     } catch {
       // LocalStorage blocked
     }
+    request.current?.abort();
     setCurrentUser(null);
     setConversations([]);
-    newChat();
+    setMessages([]);
+    setConversationId(id());
+    setMessage("");
+    clearAttachments();
+    setSidebar(false);
     setAuthModalOpen(true);
   };
 
@@ -539,7 +545,7 @@ export default function Home() {
             <section className="welcome">
               <NovaMark />
               <h1>
-                Welcome, {currentUser?.name || "Guest"} <span>👋</span>
+                {currentUser ? `Welcome, ${currentUser.name}` : "Welcome to NOVA AI"} <span>👋</span>
               </h1>
               <p>How can I help you today?</p>
               <div className="quick-prompts">
