@@ -43,12 +43,12 @@ def _get_provider_config() -> dict[str, str]:
             "provider": "Groq",
             "base_url": "https://api.groq.com/openai/v1",
             "api_key": settings.groq_api_key,
-            "default_text_model": settings.ai_model or "llama-3.3-70b-versatile",
-            "default_vision_model": settings.ai_vision_model or "llama-3.2-11b-vision-preview",
+            "default_text_model": settings.ai_model or "openai/gpt-oss-120b",
+            "default_vision_model": settings.ai_vision_model or "openai/gpt-oss-20b",
             "available_models": [
+                "openai/gpt-oss-120b",
+                "openai/gpt-oss-20b",
                 "llama-3.3-70b-versatile",
-                "llama-3.1-8b-instant",
-                "llama-3.2-11b-vision-preview",
             ],
         }
 
