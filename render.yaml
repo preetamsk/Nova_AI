@@ -12,6 +12,10 @@ services:
         value: production
       - key: PYTHON_VERSION
         value: 3.12.8
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: DATABASE_URL
@@ -21,8 +25,8 @@ services:
         value: https://frontend-six-beta-80.vercel.app
       - key: SESSION_SECRET
         generateValue: true
-      - key: OPENAI_MODEL
-        value: gpt-4.1-mini
+      - key: AI_MODEL
+        value: llama-3.3-70b-versatile
       - key: MAX_UPLOAD_BYTES
         value: 8388608
       - key: RATE_LIMIT_PER_MINUTE

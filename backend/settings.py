@@ -30,6 +30,18 @@ def _integer(name: str, default: int, minimum: int) -> int:
     return max(value, minimum)
 
 
+def _database_url() -> str:
+    url = os.getenv("DATABASE_URL")
+    if not url:
+        local = (BACKEND_DIR / "nova.db").as_posix()
+        return f"sqlite:///{local}"
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql+psycopg://", 1)
+    if url.startswith("postgresql://") and not url.startswith("postgresql+"):
+        return url.replace("postgresql://", "postgresql+psycopg://", 1)
+    return url
+
+
 @dataclass(frozen=True)
 class Settings:
     app_env: str
@@ -46,6 +58,14 @@ class Settings:
     ollama_keep_alive: str
     ollama_num_ctx: int
     ollama_num_predict: int
+    ai_provider: str
+    groq_api_key: str
+    gemini_api_key: str
+    openrouter_api_key: str
+    openai_api_key: str
+    ai_model: str
+    ai_vision_model: str
+    ai_base_url: str
 
     @property
     def is_production(self) -> bool:
@@ -58,10 +78,9 @@ class Settings:
 
 @lru_cache
 def get_settings() -> Settings:
-    local_database = (BACKEND_DIR / "nova.db").as_posix()
     return Settings(
         app_env=os.getenv("APP_ENV", "development"),
-        database_url=os.getenv("DATABASE_URL", f"sqlite:///{local_database}"),
+        database_url=_database_url(),
         frontend_origins=_origins(
             os.getenv("FRONTEND_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
         ),
@@ -76,6 +95,14 @@ def get_settings() -> Settings:
         ollama_keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "5m").strip() or "5m",
         ollama_num_ctx=_integer("OLLAMA_NUM_CTX", 4096, 512),
         ollama_num_predict=_integer("OLLAMA_NUM_PREDICT", 2048, 256),
+        ai_provider=os.getenv("AI_PROVIDER", "").strip().lower(),
+        groq_api_key=os.getenv("GROQ_API_KEY", "").strip(),
+        gemini_api_key=os.getenv("GEMINI_API_KEY", "").strip(),
+        openrouter_api_key=os.getenv("OPENROUTER_API_KEY", "").strip(),
+        openai_api_key=os.getenv("OPENAI_API_KEY", "").strip(),
+        ai_model=os.getenv("AI_MODEL", "").strip(),
+        ai_vision_model=os.getenv("AI_VISION_MODEL", "").strip(),
+        ai_base_url=os.getenv("AI_BASE_URL", "").strip().rstrip("/"),
     )
 
 
@@ -89,7 +116,8 @@ def validate_production_settings() -> None:
         missing.append("SESSION_SECRET (use a random value of at least 32 characters)")
     if not settings.frontend_origins:
         missing.append("FRONTEND_ORIGINS")
-    if not settings.ollama_base_url.startswith("http://127.0.0.1") and not settings.ollama_base_url.startswith("http://localhost"):
-        missing.append("OLLAMA_BASE_URL (must stay local)")
+    has_cloud_key = bool(settings.groq_api_key or settings.gemini_api_key or settings.openrouter_api_key or settings.openai_api_key)
+    if not has_cloud_key and not settings.ollama_base_url:
+        missing.append("GROQ_API_KEY or GEMINI_API_KEY (or another AI provider key for cloud deployment)")
     if missing:
         raise RuntimeError("Production configuration is incomplete: " + ", ".join(missing))

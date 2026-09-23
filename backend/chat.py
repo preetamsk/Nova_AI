@@ -14,7 +14,7 @@ from services.history_service import (
     get_messages,
     save_message,
 )
-from services.ollama_service import NOVAServiceError, display_model_name, list_models, stream_response
+from services.ai_service import NOVAServiceError, display_model_name, list_models, stream_response
 from services.rate_limit import chat_rate_limiter
 from settings import get_settings
 
