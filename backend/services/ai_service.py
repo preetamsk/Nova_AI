@@ -37,18 +37,7 @@ NOVA_SYSTEM_PROMPT = (
 def _get_provider_config() -> dict[str, str]:
     settings = get_settings()
 
-    # 0. Local Ollama (when explicitly set or no cloud key configured)
-    if settings.ai_provider in ("ollama", "local"):
-        return {
-            "provider": "Local Ollama",
-            "base_url": settings.ollama_base_url,
-            "api_key": "",
-            "default_text_model": settings.ollama_text_model,
-            "default_vision_model": settings.ollama_vision_model,
-            "available_models": [settings.ollama_text_model, settings.ollama_vision_model],
-        }
-
-    # 1. Groq (Recommended: fast & free tier)
+    # 1. Groq (Recommended: ultra-fast free tier)
     if settings.groq_api_key or settings.ai_provider == "groq":
         return {
             "provider": "Groq",
@@ -63,7 +52,7 @@ def _get_provider_config() -> dict[str, str]:
             ],
         }
 
-    # 2. Google Gemini (OpenAI-compatible endpoint)
+    # 2. Google Gemini (Generous free tier via OpenAI-compatible endpoint)
     if settings.gemini_api_key or settings.ai_provider == "gemini":
         return {
             "provider": "Google Gemini",

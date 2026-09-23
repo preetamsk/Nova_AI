@@ -20,6 +20,7 @@ app = FastAPI(title="NOVA AI API", docs_url=None if settings.is_production else 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(settings.frontend_origins),
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "x-nova-session", "authorization"],
