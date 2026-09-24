@@ -223,9 +223,7 @@ export async function POST(req: NextRequest) {
 
     // Deterministic Creator Attribution Response (Preetam SK)
     if (!document && !image && isCreatorQuestion(userPromptText)) {
-      const greetingPrefix = cleanUserName ? `Hi ${cleanUserName}!\n\n` : "";
       const tokens = [
-        ...(greetingPrefix ? [greetingPrefix] : []),
         "I", " was", " created", " by", " **", "Pre", "etam", " SK", "**", ".\n\n",
         "I", " am", " NOVA", ", an", " advanced", " personal", " AI", " assistant", " designed",
         " and", " built", " by", " **", "Pre", "etam", " SK", "**", " to", " help", " you",
@@ -297,11 +295,12 @@ export async function POST(req: NextRequest) {
     let activeSystemPrompt = SYSTEM_PROMPT;
     if (cleanUserName) {
       activeSystemPrompt +=
-        `\n\n### User Identity & Personalization:\n` +
+        `\n\n### User Identity & Personalization Guidelines:\n` +
         `- You are chatting with **${cleanUserName}**.\n` +
-        `- ALWAYS greet or address the user warmly by their name (for example: "Hi ${cleanUserName}!", "Hello ${cleanUserName}, ...").\n` +
-        `- Acknowledge them personally by name in your responses.\n` +
-        `- If the user asks who they are or what their name is, reply that their name is **${cleanUserName}**.`;
+        `- When the user explicitly greets you (e.g. "hi", "hello", "hey", "good morning"), greet them warmly by their name (e.g. "Hi ${cleanUserName}!").\n` +
+        `- CRITICAL: DO NOT start every normal reply or answer with "Hi ${cleanUserName}". For coding requests, questions, explanations, and follow-ups, dive straight into the answer without repetitive greeting prefixes.\n` +
+        `- If the user asks who they are or what their name is, reply that their name is **${cleanUserName}**.\n` +
+        `- Use their name naturally and occasionally when appropriate, never repetitively at the beginning of every response.`;
     }
 
     const messages: Array<{ role: string; content: any }> = [
