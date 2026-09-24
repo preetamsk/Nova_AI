@@ -154,6 +154,7 @@ export async function POST(req: NextRequest) {
       image,
       document,
       document_name,
+      user_name,
     } = body;
 
     const config = getProviderConfig(requestedModel);
@@ -181,10 +182,50 @@ export async function POST(req: NextRequest) {
     }
 
     let userPromptText = (message || "").trim();
+    const cleanUserName = typeof user_name === "string" ? user_name.trim() : "";
+
+    function isGreetingOnly(text: string): boolean {
+      const clean = text.toLowerCase().replace(/[^a-z0-9]/g, "").trim();
+      return ["hi", "hello", "hey", "heya", "hola", "namaste", "goodmorning", "goodafternoon", "goodevening", "sup", "yo"].includes(clean);
+    }
+
+    // Deterministic personalized greeting when user says "hi", "hello", etc.
+    if (!document && !image && cleanUserName && isGreetingOnly(userPromptText)) {
+      const tokens = [
+        "Hi", ` ${cleanUserName}`, "! ", "👋\n\n",
+        "How", " can", " I", " help", " you", " today", "? ",
+        "Whether", " you", " need", " assistance", " with", " coding", ",",
+        " document", " analysis", ",", " or", " creative", " projects", ",",
+        " I", "'m", " ready", " to", " assist", " you", "."
+      ];
+      const stream = new ReadableStream({
+        async start(controller) {
+          for (const token of tokens) {
+            controller.enqueue(
+              encoder.encode(`event: token\ndata: ${JSON.stringify({ text: token })}\n\n`)
+            );
+            await new Promise((r) => setTimeout(r, 20));
+          }
+          controller.enqueue(
+            encoder.encode(`event: done\ndata: ${JSON.stringify({ model: config.display })}\n\n`)
+          );
+          controller.close();
+        },
+      });
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive",
+        },
+      });
+    }
 
     // Deterministic Creator Attribution Response (Preetam SK)
     if (!document && !image && isCreatorQuestion(userPromptText)) {
+      const greetingPrefix = cleanUserName ? `Hi ${cleanUserName}!\n\n` : "";
       const tokens = [
+        ...(greetingPrefix ? [greetingPrefix] : []),
         "I", " was", " created", " by", " **", "Pre", "etam", " SK", "**", ".\n\n",
         "I", " am", " NOVA", ", an", " advanced", " personal", " AI", " assistant", " designed",
         " and", " built", " by", " **", "Pre", "etam", " SK", "**", " to", " help", " you",
@@ -253,8 +294,18 @@ export async function POST(req: NextRequest) {
       userPromptText = `${userInstruction}Please provide a comprehensive, professional visual analysis of the attached image, detailing its primary subject, key components, any visible text or labels, and relevant context.`;
     }
 
+    let activeSystemPrompt = SYSTEM_PROMPT;
+    if (cleanUserName) {
+      activeSystemPrompt +=
+        `\n\n### User Identity & Personalization:\n` +
+        `- You are chatting with **${cleanUserName}**.\n` +
+        `- ALWAYS greet or address the user warmly by their name (for example: "Hi ${cleanUserName}!", "Hello ${cleanUserName}, ...").\n` +
+        `- Acknowledge them personally by name in your responses.\n` +
+        `- If the user asks who they are or what their name is, reply that their name is **${cleanUserName}**.`;
+    }
+
     const messages: Array<{ role: string; content: any }> = [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: activeSystemPrompt },
     ];
 
     // Include recent conversation dialogue turns (up to 6 previous messages) for context
