@@ -17,10 +17,10 @@ function getProviderConfig(requestedModel?: string) {
   const openAIKey = process.env.OPENAI_API_KEY;
 
   if (groqKey) {
-    let model = "llama-3.1-8b-instant";
+    let model = "openai/gpt-oss-120b";
     if (requestedModel && requestedModel.trim()) {
       const clean = requestedModel.replace(/^Groq \((.*)\)$/, "$1").trim();
-      if (!clean.includes("gpt-oss") && !clean.includes("qwen") && !clean.includes("NOVA") && !clean.includes("llama-3.3-70b-versatile")) {
+      if (clean && !clean.includes("NOVA") && clean !== "undefined") {
         model = clean;
       }
     }
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     }
 
     const payload = {
-      model: image && config.provider === "Groq" ? "llama-3.2-11b-vision-preview" : config.model,
+      model: image && config.provider === "Groq" ? "openai/gpt-oss-20b" : config.model,
       messages,
       stream: true,
       max_tokens: 2048,

@@ -53,7 +53,7 @@ export default function Home() {
   const [conversationId, setConversationId] = useState(id);
   const [message, setMessage] = useState("");
   const [models, setModels] = useState<string[]>([]);
-  const [model, setModel] = useState("llama-3.1-8b-instant");
+  const [model, setModel] = useState("openai/gpt-oss-120b");
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<string>();
   const [imageName, setImageName] = useState("");
@@ -120,7 +120,7 @@ export default function Home() {
 
     void api.models().then(({ models }) => {
       setModels(models);
-      if (models.includes("llama-3.3-70b-versatile")) setModel("llama-3.3-70b-versatile");
+      if (models.includes("openai/gpt-oss-120b")) setModel("openai/gpt-oss-120b");
       else if (models[0]) setModel(models[0]);
     }).catch(() => undefined);
 
