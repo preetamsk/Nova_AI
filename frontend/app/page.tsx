@@ -53,7 +53,7 @@ export default function Home() {
   const [conversationId, setConversationId] = useState(id);
   const [message, setMessage] = useState("");
   const [models, setModels] = useState<string[]>([]);
-  const [model, setModel] = useState("qwen2.5:1.5b");
+  const [model, setModel] = useState("llama-3.3-70b-versatile");
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<string>();
   const [imageName, setImageName] = useState("");
@@ -120,7 +120,7 @@ export default function Home() {
 
     void api.models().then(({ models }) => {
       setModels(models);
-      if (models.includes("qwen2.5:1.5b")) setModel("qwen2.5:1.5b");
+      if (models.includes("llama-3.3-70b-versatile")) setModel("llama-3.3-70b-versatile");
       else if (models[0]) setModel(models[0]);
     }).catch(() => undefined);
 
