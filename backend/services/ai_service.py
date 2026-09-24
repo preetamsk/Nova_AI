@@ -11,6 +11,7 @@ Supports free-tier OpenAI-compatible cloud providers:
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterator
 
 import httpx
@@ -22,6 +23,37 @@ from settings import get_settings
 
 class NOVAServiceError(Exception):
     """User-safe exception for AI provider errors."""
+
+
+def _is_creator_question(raw: str) -> bool:
+    if not raw:
+        return False
+    clean = re.sub(r"[^a-zA-Z0-9\s]", " ", raw.lower()).strip()
+    clean = re.sub(r"\s+", " ", clean)
+
+    patterns = [
+        r"\bwho (created|create|made|make|built|build|developed|develop|designed|design|coded|code|programmed|program|trained|train) (you|u|nova|this)\b",
+        r"\b(how|who) (created|made|built|developed|designed) (you|u|nova)\b",
+        r"\bwho (is|was) your (creator|maker|builder|developer|author|founder|owner|inventor|master|parent|father)\b",
+        r"\bwho (are you|r u) (created|made|built|developed) by\b",
+        r"\bwho (owns|invented|coded|programmed) (you|u|nova)\b",
+        r"\bwho (founded|started) nova\b",
+        r"\bwho made you\b",
+        r"\bwho created you\b",
+        r"\bwho built you\b",
+        r"\bwho developed you\b",
+        r"\bwho designed you\b",
+        r"\bwho is preetam\b",
+        r"\bwho is preetam sk\b",
+        r"\btell me who (created|made|built|developed) you\b",
+    ]
+    if any(re.search(p, clean) for p in patterns):
+        return True
+
+    has_who = bool(re.search(r"\b(who|whom|how)\b", clean))
+    has_verb = bool(re.search(r"\b(created|create|built|build|made|make|developed|developer|creator|maker)\b", clean))
+    has_target = bool(re.search(r"\b(you|u|nova)\b", clean))
+    return has_who and has_verb and has_target
 
 
 NOVA_SYSTEM_PROMPT = (
@@ -167,6 +199,11 @@ def stream_response(
     document_name: str | None = None,
     model_name: str | None = None,
 ) -> Iterator[str]:
+    latest_msg = history[-1].content if history else ""
+    if not image and not document and _is_creator_question(latest_msg):
+        yield "I was created by **Preetam SK**.\n\nI am NOVA, an advanced personal AI assistant designed and built by **Preetam SK** to help you with coding, document analysis, and complex problem-solving."
+        return
+
     config = _get_provider_config()
 
     # Route to local Ollama if no cloud key is set and Ollama is selected

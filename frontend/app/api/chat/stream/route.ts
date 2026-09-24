@@ -103,6 +103,38 @@ function getProviderConfig(requestedModel?: string) {
   return null;
 }
 
+function isCreatorQuestion(raw: string): boolean {
+  if (!raw) return false;
+  const clean = raw.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+
+  const patterns = [
+    /\bwho (created|create|made|make|built|build|developed|develop|designed|design|coded|code|programmed|program|trained|train) (you|u|nova|this)\b/,
+    /\b(how|who) (created|made|built|developed|designed) (you|u|nova)\b/,
+    /\bwho (is|was) your (creator|maker|builder|developer|author|founder|owner|inventor|master|parent|father)\b/,
+    /\bwho (are you|r u) (created|made|built|developed) by\b/,
+    /\bwho (owns|invented|coded|programmed) (you|u|nova)\b/,
+    /\bwho (founded|started) nova\b/,
+    /\bwho made you\b/,
+    /\bwho created you\b/,
+    /\bwho built you\b/,
+    /\bwho developed you\b/,
+    /\bwho designed you\b/,
+    /\bwho is preetam\b/,
+    /\bwho is preetam sk\b/,
+    /\btell me who (created|made|built|developed) you\b/,
+  ];
+
+  if (patterns.some((p) => p.test(clean))) {
+    return true;
+  }
+
+  const hasWho = /\b(who|whom|how)\b/.test(clean);
+  const hasVerb = /\b(created|create|built|build|made|make|developed|developer|creator|maker)\b/.test(clean);
+  const hasTarget = /\b(you|u|nova)\b/.test(clean);
+
+  return hasWho && hasVerb && hasTarget;
+}
+
 export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
 
@@ -134,8 +166,38 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Process PDF document if attached
     let userPromptText = (message || "").trim();
+
+    // Deterministic Creator Attribution Response (Preetam SK)
+    if (!document && !image && isCreatorQuestion(userPromptText)) {
+      const tokens = [
+        "I", " was", " created", " by", " **", "Pre", "etam", " SK", "**", ".\n\n",
+        "I", " am", " NOVA", ", an", " advanced", " personal", " AI", " assistant", " designed",
+        " and", " built", " by", " **", "Pre", "etam", " SK", "**", " to", " help", " you",
+        " with", " coding", ",", " document", " analysis", ",", " and", " complex", " problem", "-solving", "."
+      ];
+      const stream = new ReadableStream({
+        async start(controller) {
+          for (const token of tokens) {
+            controller.enqueue(
+              encoder.encode(`event: token\ndata: ${JSON.stringify({ text: token })}\n\n`)
+            );
+            await new Promise((r) => setTimeout(r, 20));
+          }
+          controller.enqueue(
+            encoder.encode(`event: done\ndata: ${JSON.stringify({ model: config.display })}\n\n`)
+          );
+          controller.close();
+        },
+      });
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive",
+        },
+      });
+    }
     if (document) {
       const extractedText = await extractPdfText(document);
       const filename = document_name || "document.pdf";
