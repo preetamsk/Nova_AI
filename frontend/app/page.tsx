@@ -223,9 +223,11 @@ export default function Home() {
   };
 
   const receiveFrame = (frame: string, assistant: string) => {
-    const event = frame.match(/^event:\s*(.+)$/m)?.[1];
-    const raw = frame.match(/^data:\s*(.+)$/m)?.[1];
-    if (!event || !raw) return;
+    const event = frame.match(/^event:\s*([^\r\n]+)/m)?.[1]?.trim();
+    const dataIdx = frame.indexOf("data:");
+    if (!event || dataIdx === -1) return;
+    const raw = frame.slice(dataIdx + 5).trim();
+    if (!raw) return;
     try {
       const payload = JSON.parse(raw) as { text?: string; message?: string };
       if (event === "token" && payload.text) {
@@ -295,10 +297,15 @@ export default function Home() {
 
       // Persist the completed conversation
       setMessages((finalItems) => {
+        const cleaned = finalItems.map((item) =>
+          item.key === assistant && !item.content.trim()
+            ? { ...item, content: "⚠️ No response received from the cloud AI service. Please try again." }
+            : item
+        );
         if (currentUser?.phone) {
-          syncConversationToLocal(conversationId, finalItems, currentUser.phone);
+          syncConversationToLocal(conversationId, cleaned, currentUser.phone);
         }
-        return finalItems;
+        return cleaned;
       });
     } catch (error) {
       if ((error as Error).name !== "AbortError") {

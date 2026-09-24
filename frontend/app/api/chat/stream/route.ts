@@ -10,6 +10,27 @@ const SYSTEM_PROMPT =
   "Structure technical answers logically using clear headings, bullet points, or step-by-step instructions where appropriate, " +
   "and always bring your thoughts to a complete conclusion.";
 
+async function extractPdfText(dataUrlOrBase64: string): Promise<string> {
+  try {
+    const base64 = dataUrlOrBase64.includes(",")
+      ? dataUrlOrBase64.split(",")[1]
+      : dataUrlOrBase64;
+    const binary = Buffer.from(base64, "base64");
+    const { extractText } = await import("unpdf");
+    const res = await extractText(new Uint8Array(binary));
+    const pages = Array.isArray(res.text) ? res.text : [res.text];
+    const joined = pages
+      .filter(Boolean)
+      .map((p: string) => p.trim())
+      .join("\n\n")
+      .trim();
+    return joined;
+  } catch (err: any) {
+    console.error("PDF parse error:", err?.message || err);
+    return "";
+  }
+}
+
 function getProviderConfig(requestedModel?: string) {
   const groqKey = process.env.GROQ_API_KEY;
   const geminiKey = process.env.GEMINI_API_KEY;
@@ -70,22 +91,22 @@ function getProviderConfig(requestedModel?: string) {
 }
 
 export async function POST(req: NextRequest) {
+  const encoder = new TextEncoder();
+
   try {
     const body = await req.json();
     const { message, model: requestedModel, image, document, document_name } = body;
 
     const config = getProviderConfig(requestedModel);
 
-    // Prepare SSE stream response
-    const encoder = new TextEncoder();
-
     if (!config) {
-      // Missing API key error
       const stream = new ReadableStream({
         start(controller) {
           controller.enqueue(
             encoder.encode(
-              `event: error\ndata: {"message": "Cloud AI API key is not configured. Please add GROQ_API_KEY or GEMINI_API_KEY in Vercel environment variables."}\n\n`
+              `event: error\ndata: ${JSON.stringify({
+                message: "Cloud AI API key is not configured. Please add GROQ_API_KEY in Vercel environment variables.",
+              })}\n\n`
             )
           );
           controller.close();
@@ -100,10 +121,25 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Format messages for cloud LLM
-    let userContent: any = message || (image ? "Please analyse this image." : "Please analyse this document.");
-    if (document && document_name) {
-      userContent = `${userContent}\n\n[Document attached: ${document_name}]`;
+    // Process PDF document if attached
+    let userPromptText = (message || "").trim();
+    if (document) {
+      const extractedText = await extractPdfText(document);
+      const filename = document_name || "document.pdf";
+      if (extractedText) {
+        const truncated =
+          extractedText.length > 25000
+            ? extractedText.slice(0, 25000) + "\n\n...[Content truncated for length]..."
+            : extractedText;
+        const prefix = userPromptText
+          ? `${userPromptText}\n\n`
+          : "Please carefully analyze and summarize this attached document:\n\n";
+        userPromptText = `${prefix}📄 [Attached PDF: ${filename}]\n\`\`\`text\n${truncated}\n\`\`\`\n[End of Document]`;
+      } else {
+        userPromptText = `${userPromptText || "Please inspect this document"}\n\n[Attached Document: ${filename} (Scanned or image-only PDF with no extractable text layer)]`;
+      }
+    } else if (!userPromptText && image) {
+      userPromptText = "Please describe and analyse this image in detail.";
     }
 
     const messages: Array<{ role: string; content: any }> = [
@@ -114,16 +150,19 @@ export async function POST(req: NextRequest) {
       messages.push({
         role: "user",
         content: [
-          { type: "text", text: typeof userContent === "string" ? userContent : "Please analyse this image." },
+          { type: "text", text: userPromptText || "Please analyse this image." },
           { type: "image_url", image_url: { url: image } },
         ],
       });
     } else {
-      messages.push({ role: "user", content: userContent });
+      messages.push({ role: "user", content: userPromptText });
     }
 
+    // Vision model selection: on Groq, use qwen/qwen3.8-27b for image inputs
+    const selectedModel = image && config.provider === "Groq" ? "qwen/qwen3.8-27b" : config.model;
+
     const payload = {
-      model: image && config.provider === "Groq" ? "openai/gpt-oss-20b" : config.model,
+      model: selectedModel,
       messages,
       stream: true,
       max_tokens: 2048,
@@ -143,12 +182,17 @@ export async function POST(req: NextRequest) {
 
     if (!upstreamResponse.ok || !upstreamResponse.body) {
       const errText = await upstreamResponse.text().catch(() => "Unknown upstream error");
+      let errMsg = `Cloud AI service error (${upstreamResponse.status})`;
+      try {
+        const parsed = JSON.parse(errText);
+        errMsg = parsed?.error?.message || errMsg;
+      } catch {
+        errMsg = `${errMsg}: ${errText.slice(0, 160)}`;
+      }
       const stream = new ReadableStream({
         start(controller) {
           controller.enqueue(
-            encoder.encode(
-              `event: error\ndata: {"message": "Cloud AI service error (${upstreamResponse.status}): ${errText.slice(0, 180)}"}\n\n`
-            )
+            encoder.encode(`event: error\ndata: ${JSON.stringify({ message: errMsg })}\n\n`)
           );
           controller.close();
         },
@@ -162,7 +206,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Transform upstream chunk stream to SSE
     const reader = upstreamResponse.body.getReader();
     const decoder = new TextDecoder();
 
@@ -186,7 +229,7 @@ export async function POST(req: NextRequest) {
               const dataStr = trimmed.slice(6).trim();
               if (dataStr === "[DONE]") {
                 controller.enqueue(
-                  encoder.encode(`event: done\ndata: {"model": ${JSON.stringify(config.display)}}\n\n`)
+                  encoder.encode(`event: done\ndata: ${JSON.stringify({ model: config.display })}\n\n`)
                 );
                 continue;
               }
@@ -196,11 +239,11 @@ export async function POST(req: NextRequest) {
                 const delta = parsed?.choices?.[0]?.delta?.content ?? "";
                 if (delta) {
                   controller.enqueue(
-                    encoder.encode(`event: token\ndata: {"text": ${JSON.stringify(delta)}}\n\n`)
+                    encoder.encode(`event: token\ndata: ${JSON.stringify({ text: delta })}\n\n`)
                   );
                 }
               } catch {
-                // Ignore JSON parse errors on partial chunks
+                // Ignore partial JSON chunks
               }
             }
           }
@@ -211,7 +254,7 @@ export async function POST(req: NextRequest) {
               const dataStr = trimmed.slice(6).trim();
               if (dataStr === "[DONE]") {
                 controller.enqueue(
-                  encoder.encode(`event: done\ndata: {"model": ${JSON.stringify(config.display)}}\n\n`)
+                  encoder.encode(`event: done\ndata: ${JSON.stringify({ model: config.display })}\n\n`)
                 );
               }
             }
@@ -219,7 +262,9 @@ export async function POST(req: NextRequest) {
         } catch (err: any) {
           controller.enqueue(
             encoder.encode(
-              `event: error\ndata: {"message": "Stream interrupted: ${err?.message || "connection error"}"}\n\n`
+              `event: error\ndata: ${JSON.stringify({
+                message: "Stream interrupted: " + (err?.message || "connection error"),
+              })}\n\n`
             )
           );
         } finally {
@@ -237,11 +282,14 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    const encoder = new TextEncoder();
     const stream = new ReadableStream({
       start(controller) {
         controller.enqueue(
-          encoder.encode(`event: error\ndata: {"message": "Internal error: ${error?.message || "server error"}"}\n\n`)
+          encoder.encode(
+            `event: error\ndata: ${JSON.stringify({
+              message: "Internal error: " + (error?.message || "server error"),
+            })}\n\n`
+          )
         );
         controller.close();
       },
