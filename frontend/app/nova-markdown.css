@@ -1,0 +1,234 @@
+/* NOVA AI - Rich Markdown & High-Precision Table System */
+
+.nova-markdown-body {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.68;
+  font-size: 15.5px;
+  color: inherit;
+}
+
+.nova-markdown-body p {
+  margin: 0 0 12px 0;
+  line-height: 1.68;
+}
+
+.nova-markdown-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Headings */
+.nova-markdown-body h1,
+.nova-markdown-body h2,
+.nova-markdown-body h3,
+.nova-markdown-body h4 {
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 20px 0 10px 0;
+  color: #f8fafc;
+}
+
+.nova-markdown-body h1:first-child,
+.nova-markdown-body h2:first-child,
+.nova-markdown-body h3:first-child {
+  margin-top: 0;
+}
+
+.nova-markdown-body h1 {
+  font-size: 1.45rem;
+  border-bottom: 1px solid #282f42;
+  padding-bottom: 8px;
+}
+
+.nova-markdown-body h2 {
+  font-size: 1.25rem;
+}
+
+.nova-markdown-body h3 {
+  font-size: 1.1rem;
+}
+
+.nova-markdown-body h4 {
+  font-size: 0.98rem;
+}
+
+/* Lists */
+.nova-markdown-body ul,
+.nova-markdown-body ol {
+  margin: 8px 0 14px 22px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nova-markdown-body li {
+  line-height: 1.62;
+}
+
+.nova-markdown-body li > p {
+  margin: 0;
+}
+
+/* Blockquotes */
+.nova-markdown-body blockquote {
+  margin: 14px 0;
+  padding: 10px 16px;
+  border-left: 3.5px solid #8b6aff;
+  background: #141722;
+  border-radius: 0 10px 10px 0;
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* Horizontal Rule */
+.nova-markdown-body hr {
+  border: 0;
+  border-top: 1px solid #282f42;
+  margin: 22px 0;
+}
+
+/* Inline Code */
+.nova-markdown-body .nova-inline-code {
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.88em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: #191d29;
+  border: 1px solid #2d3448;
+  color: #cfbcff;
+}
+
+/* Links */
+.nova-markdown-body a {
+  color: #a48fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.nova-markdown-body a:hover {
+  color: #cbbaff;
+}
+
+/* Precision Markdown Tables */
+.nova-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 16px 0;
+  border: 1px solid #2d3345;
+  border-radius: 12px;
+  background: #0b0d13;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+}
+
+.nova-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+  min-width: 520px;
+}
+
+.nova-table-wrap thead {
+  background: #151824;
+}
+
+.nova-table-wrap th {
+  padding: 12px 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  border-bottom: 2px solid #2d3345;
+  text-align: left;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.nova-table-wrap td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #1c202e;
+  color: #cbd5e1;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.nova-table-wrap tbody tr:nth-child(even) {
+  background: #0f121a;
+}
+
+.nova-table-wrap tbody tr:hover {
+  background: #191e2b;
+}
+
+.nova-table-wrap tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Light Theme Overrides */
+html.nova-light .nova-markdown-body h1,
+html.nova-light .nova-markdown-body h2,
+html.nova-light .nova-markdown-body h3,
+html.nova-light .nova-markdown-body h4 {
+  color: #0f172a;
+}
+
+html.nova-light .nova-markdown-body h1 {
+  border-bottom-color: #e2e8f0;
+}
+
+html.nova-light .nova-markdown-body hr {
+  border-top-color: #e2e8f0;
+}
+
+html.nova-light .nova-markdown-body blockquote {
+  border-left-color: #6366f1;
+  background: #f8fafc;
+  color: #475569;
+}
+
+html.nova-light .nova-markdown-body .nova-inline-code {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #4338ca;
+}
+
+html.nova-light .nova-markdown-body a {
+  color: #4f46e5;
+}
+
+html.nova-light .nova-markdown-body a:hover {
+  color: #3730a3;
+}
+
+html.nova-light .nova-table-wrap {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+html.nova-light .nova-table-wrap thead {
+  background: #f8fafc;
+}
+
+html.nova-light .nova-table-wrap th {
+  color: #0f172a;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+html.nova-light .nova-table-wrap td {
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+html.nova-light .nova-table-wrap tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+html.nova-light .nova-table-wrap tbody tr:hover {
+  background: #f1f5f9;
+}

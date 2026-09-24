@@ -4,6 +4,7 @@ import { Camera, Check, Copy, FileText, ImageIcon, ImagePlus, LogOut, Menu, Mic,
 import { ChangeEvent, DragEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import NovaMark from "@/components/NovaMark";
 import GuestAuthModal, { CURRENT_USER_KEY, NovaUser } from "@/components/GuestAuthModal";
+import MarkdownMessage from "@/components/MarkdownMessage";
 import { api, API_URL, ChatMessage, Conversation, getAuthHeaders, saveSessionToken } from "@/lib/api";
 
 type Message = ChatMessage & { key: string };
@@ -607,7 +608,13 @@ export default function Home() {
                         <span><b>PDF attached</b>{item.document_name}</span>
                       </div>
                     )}
-                    {item.content && <p>{item.content}</p>}
+                    {item.content && (
+                      item.role === "assistant" ? (
+                        <MarkdownMessage content={item.content} />
+                      ) : (
+                        <p>{item.content}</p>
+                      )
+                    )}
                     {item.role === "assistant" && !item.content && loading && (
                       <span className="typing"><i /><i /><i /></span>
                     )}

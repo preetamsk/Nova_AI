@@ -7,6 +7,7 @@
 @import "./nova-logo-asset.css";
 @import "./nova-auth-modal.css";
 @import "./nova-light-theme.css";
+@import "./nova-markdown.css";
 
 /* Keep branding in navigation only; the chat/welcome area stays logo-free. */
 .welcome .nova-mark { display: none; }
