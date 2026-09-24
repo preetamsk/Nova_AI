@@ -4,11 +4,18 @@ export const dynamic = "force-dynamic";
 
 const SYSTEM_PROMPT =
   "You are NOVA, an expert personal AI assistant. " +
-  "Provide complete, well-structured, clear, and technically accurate responses. " +
-  "Never stop, abbreviate, or truncate explanations, math formulas, or code midway. " +
-  "When writing code, always provide full, working implementations within proper markdown code fences with the language specified. " +
-  "Structure technical answers logically using clear headings, bullet points, or step-by-step instructions where appropriate, " +
-  "and always bring your thoughts to a complete conclusion.";
+  "Always provide authoritative, well-structured, clear, professional, and technically accurate responses.\n\n" +
+  "### Document & PDF Analysis Standards:\n" +
+  "- Deliver an executive-level breakdown and comprehensive summary.\n" +
+  "- Format responses using structured Markdown: **Executive Summary**, **Key Findings & Core Points**, **Data & Metrics** (using clean markdown tables where applicable), and **Actionable Conclusions / Next Steps**.\n" +
+  "- Faithfully reference exact details, figures, and dates directly from the document.\n\n" +
+  "### Visual & Image Analysis Standards:\n" +
+  "- Provide a thorough, structured visual inspection.\n" +
+  "- Detail the subject matter, primary visual elements, transcribed text or labels, composition, and context.\n" +
+  "- Directly and thoughtfully answer the user's specific inquiries.\n\n" +
+  "### General Quality Standards:\n" +
+  "- Format all responses using clean GitHub-flavored markdown with bold headers, bullet lists, and fenced code blocks.\n" +
+  "- Never truncate or leave explanations unfinished; bring every thought to a complete, polished conclusion.";
 
 async function extractPdfText(dataUrlOrBase64: string): Promise<string> {
   try {
@@ -132,14 +139,17 @@ export async function POST(req: NextRequest) {
             ? extractedText.slice(0, 25000) + "\n\n...[Content truncated for length]..."
             : extractedText;
         const prefix = userPromptText
-          ? `${userPromptText}\n\n`
-          : "Please carefully analyze and summarize this attached document:\n\n";
-        userPromptText = `${prefix}📄 [Attached PDF: ${filename}]\n\`\`\`text\n${truncated}\n\`\`\`\n[End of Document]`;
+          ? `User Inquiry / Instructions: "${userPromptText}"\n\n`
+          : "Please provide a comprehensive, executive-level summary and professional breakdown of this document.\n\n";
+        userPromptText = `${prefix}📄 [Attached Document: "${filename}"]:\n\`\`\`text\n${truncated}\n\`\`\`\n\nPlease deliver a detailed, professional, and well-structured response based on the document above.`;
       } else {
-        userPromptText = `${userPromptText || "Please inspect this document"}\n\n[Attached Document: ${filename} (Scanned or image-only PDF with no extractable text layer)]`;
+        userPromptText = `${userPromptText || "Please inspect this document"}\n\n[Attached Document: "${filename}" (Note: Scanned or image-only PDF with no extractable text layer)]`;
       }
-    } else if (!userPromptText && image) {
-      userPromptText = "Please describe and analyse this image in detail.";
+    } else if (image) {
+      const userInstruction = userPromptText
+        ? `User Request: "${userPromptText}"\n\n`
+        : "";
+      userPromptText = `${userInstruction}Please provide a comprehensive, professional visual analysis of the attached image, detailing its primary subject, key components, any visible text or labels, and relevant context.`;
     }
 
     const messages: Array<{ role: string; content: any }> = [
@@ -165,7 +175,7 @@ export async function POST(req: NextRequest) {
       model: selectedModel,
       messages,
       stream: true,
-      max_tokens: 2048,
+      max_tokens: image ? 800 : 2048,
       temperature: 0.4,
     };
 

@@ -1,0 +1,409 @@
+/* Comprehensive Premium Light Mode for NOVA AI */
+
+/* Root & Background */
+html.nova-light {
+  color-scheme: light;
+}
+
+html.nova-light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.nova-light .nova-shell {
+  background: radial-gradient(circle at 65% -20%, #e0e7ff 0%, #f8fafc 55%);
+}
+
+/* Crisp & Gorgeous Logo in Light Mode */
+html.nova-light .nova-mark {
+  filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.22));
+}
+
+html.nova-light .nova-wordmark {
+  border: 1px solid #c7d2fe;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #090e1a 0%, #151b2e 100%);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+html.nova-light .nova-wordmark > svg {
+  filter: brightness(1.08) contrast(1.04);
+  mix-blend-mode: normal;
+}
+
+/* Sidebar in Light Mode */
+html.nova-light .sidebar {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04);
+}
+
+html.nova-light .sidebar-header {
+  border-color: #f1f5f9;
+}
+
+html.nova-light .new-chat {
+  background-color: #4f46e5;
+  border-color: #4338ca;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(79, 70, 229, 0.25);
+}
+
+html.nova-light .new-chat:hover {
+  background-color: #4338ca;
+}
+
+html.nova-light .section-label {
+  color: #64748b;
+  font-weight: 600;
+}
+
+html.nova-light .conversation {
+  background-color: transparent;
+  border-color: transparent;
+  color: #334155;
+}
+
+html.nova-light .conversation:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+html.nova-light .conversation.active {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+html.nova-light .conversation-time,
+html.nova-light .empty-history {
+  color: #94a3b8;
+}
+
+/* Sidebar Footer & Profile Actions */
+html.nova-light .sidebar-footer {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+html.nova-light .sidebar-profile-btn {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+html.nova-light .sidebar-profile-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+html.nova-light .sidebar-switch-profile-btn {
+  background-color: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+html.nova-light .sidebar-switch-profile-btn:hover {
+  background-color: #e0e7ff;
+  border-color: #818cf8;
+  color: #312e81;
+}
+
+html.nova-light .sidebar-logout-btn-full {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+html.nova-light .sidebar-logout-btn-full:hover {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+html.nova-light .sidebar-footer button:last-child {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+html.nova-light .sidebar-footer button:last-child:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Chat Panel & Topbar */
+html.nova-light .chat-panel {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+html.nova-light .topbar {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+html.nova-light .topbar-brand strong {
+  color: #0f172a;
+}
+
+html.nova-light .topbar-brand span {
+  color: #64748b;
+}
+
+html.nova-light .topbar-actions button {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+html.nova-light .topbar-actions button:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+html.nova-light .topbar-user-pill {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+html.nova-light .topbar-user-pill:hover {
+  background-color: #f1f5f9;
+  border-color: #6366f1;
+  color: #4338ca;
+}
+
+html.nova-light .topbar-logout-btn {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+html.nova-light .topbar-logout-btn:hover {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* Chat Messages & Welcome */
+html.nova-light .chat-scroll {
+  background-color: #f8fafc;
+}
+
+html.nova-light .welcome h1 {
+  color: #0f172a;
+}
+
+html.nova-light .welcome p {
+  color: #475569;
+}
+
+html.nova-light .quick-prompts button {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #1e293b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+html.nova-light .quick-prompts button:hover {
+  background-color: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+html.nova-light .message-bubble.user {
+  background-color: #4f46e5;
+  border-color: #4338ca;
+  color: #ffffff;
+}
+
+html.nova-light .message-bubble.user p {
+  color: #ffffff;
+}
+
+html.nova-light .message-bubble.assistant {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #0f172a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+html.nova-light .message-bubble.assistant p {
+  color: #0f172a;
+}
+
+html.nova-light .message-bubble.assistant strong {
+  color: #0f172a;
+}
+
+html.nova-light .message-bubble.assistant h1,
+html.nova-light .message-bubble.assistant h2,
+html.nova-light .message-bubble.assistant h3,
+html.nova-light .message-bubble.assistant h4 {
+  color: #0f172a;
+}
+
+html.nova-light .message-bubble.assistant ul,
+html.nova-light .message-bubble.assistant ol {
+  color: #1e293b;
+}
+
+html.nova-light .assistant-actions button {
+  background-color: transparent;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+html.nova-light .assistant-actions button:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+html.nova-light .image-card {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+html.nova-light .image-card > div {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+html.nova-light .document-card {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+html.nova-light .typing i {
+  background-color: #6366f1;
+}
+
+/* Composer */
+html.nova-light .composer-zone {
+  background: linear-gradient(transparent, #f8fafc 25%);
+}
+
+html.nova-light .composer {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+html.nova-light .composer:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+html.nova-light .composer textarea {
+  color: #0f172a;
+  background-color: transparent;
+}
+
+html.nova-light .composer textarea::placeholder {
+  color: #94a3b8;
+}
+
+html.nova-light .composer-actions button {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+html.nova-light .composer-actions button:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+html.nova-light .send {
+  background-color: #4f46e5;
+  border-color: #4338ca;
+  color: #ffffff;
+}
+
+html.nova-light .send:hover {
+  background-color: #4338ca;
+}
+
+html.nova-light .preview-chip {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+html.nova-light .drop-overlay {
+  background-color: rgba(238, 245, 255, 0.95);
+  border-color: #818cf8;
+  color: #4338ca;
+}
+
+/* Guest Verification Modal in Light Mode */
+html.nova-light .guest-modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+html.nova-light .guest-modal-card {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #0f172a;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+html.nova-light .guest-modal-title {
+  color: #0f172a;
+}
+
+html.nova-light .guest-modal-subtitle {
+  color: #64748b;
+}
+
+html.nova-light .guest-saved-section {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+html.nova-light .guest-saved-label {
+  color: #4f46e5;
+}
+
+html.nova-light .guest-chip {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+html.nova-light .guest-chip:hover {
+  background-color: #eef2ff;
+  border-color: #6366f1;
+  color: #4338ca;
+}
+
+html.nova-light .guest-field-label {
+  color: #334155;
+}
+
+html.nova-light .guest-input {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+html.nova-light .guest-input::placeholder {
+  color: #94a3b8;
+}
+
+html.nova-light .guest-input:focus {
+  background-color: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+html.nova-light .guest-footer-note {
+  color: #94a3b8;
+}

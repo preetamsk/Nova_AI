@@ -1,12 +1,9 @@
-/* The source artwork has a black raster canvas. Blend that canvas away while
-   retaining its white, blue, and violet lettering without a visible frame. */
+/* The wordmark has an authentic transparent alpha canvas */
 .nova-wordmark > svg {
-  mix-blend-mode: screen;
+  mix-blend-mode: normal;
 }
 
-/* On a light surface, invert only for compositing so black becomes the page
-   colour and the wordmark remains clearly visible. */
 html.nova-light .nova-wordmark > svg {
-  filter: invert(1) hue-rotate(180deg) brightness(.78);
-  mix-blend-mode: multiply;
+  filter: brightness(1.06) contrast(1.02);
+  mix-blend-mode: normal;
 }

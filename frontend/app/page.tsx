@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Check, Copy, FileText, ImageIcon, ImagePlus, LogOut, Menu, Mic, MicOff, Moon, Plus, Search, Send, Settings, Sparkles, ThumbsDown, ThumbsUp, Trash2, User, X } from "lucide-react";
+import { Camera, Check, Copy, FileText, ImageIcon, ImagePlus, LogOut, Menu, Mic, MicOff, Moon, Plus, Search, Send, Settings, Sparkles, ThumbsDown, ThumbsUp, Trash2, User, Users, X } from "lucide-react";
 import { ChangeEvent, DragEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import NovaMark from "@/components/NovaMark";
 import GuestAuthModal, { CURRENT_USER_KEY, NovaUser } from "@/components/GuestAuthModal";
@@ -460,19 +460,45 @@ export default function Home() {
         </div>
 
         <div className="sidebar-footer">
-          <button onClick={() => setAuthModalOpen(true)}>
-            <Settings size={18} />
-            Profile
+          <button
+            type="button"
+            className="sidebar-profile-btn"
+            onClick={() => setAuthModalOpen(true)}
+            title="View Active Profile"
+          >
+            <User size={18} />
+            <span>Profile ({currentUser ? currentUser.name : "Guest"})</span>
           </button>
+
+          <button
+            type="button"
+            className="sidebar-switch-profile-btn"
+            onClick={() => setAuthModalOpen(true)}
+            title="Switch User Profile"
+          >
+            <Users size={18} />
+            <span>Switch Profile</span>
+          </button>
+
           {currentUser && (
-            <button onClick={handleLogout} title="Log Out">
+            <button
+              type="button"
+              className="sidebar-logout-btn-full"
+              onClick={handleLogout}
+              title="Log Out"
+            >
               <LogOut size={18} />
-              Log Out
+              <span>Log Out</span>
             </button>
           )}
-          <button onClick={() => void clearChat()}>
+
+          <button
+            type="button"
+            onClick={() => void clearChat()}
+            title="Clear Chat"
+          >
             <Trash2 size={18} />
-            Clear
+            <span>Clear</span>
           </button>
         </div>
       </aside>
