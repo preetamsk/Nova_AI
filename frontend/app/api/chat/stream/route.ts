@@ -193,10 +193,7 @@ export async function POST(req: NextRequest) {
 
               try {
                 const parsed = JSON.parse(dataStr);
-                const delta =
-                  parsed?.choices?.[0]?.delta?.content ??
-                  parsed?.choices?.[0]?.delta?.reasoning ??
-                  "";
+                const delta = parsed?.choices?.[0]?.delta?.content ?? "";
                 if (delta) {
                   controller.enqueue(
                     encoder.encode(`event: token\ndata: {"text": ${JSON.stringify(delta)}}\n\n`)
