@@ -135,12 +135,26 @@ function isCreatorQuestion(raw: string): boolean {
   return hasWho && hasVerb && hasTarget;
 }
 
+// In-memory cache for document text per conversation_id
+declare global {
+  var _novaDocCache: Map<string, { filename: string; text: string }> | undefined;
+}
+const docCache = globalThis._novaDocCache ?? (globalThis._novaDocCache = new Map<string, { filename: string; text: string }>());
+
 export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
 
   try {
     const body = await req.json();
-    const { message, model: requestedModel, image, document, document_name } = body;
+    const {
+      conversation_id,
+      message,
+      messages: clientHistory,
+      model: requestedModel,
+      image,
+      document,
+      document_name,
+    } = body;
 
     const config = getProviderConfig(requestedModel);
 
@@ -198,21 +212,40 @@ export async function POST(req: NextRequest) {
         },
       });
     }
+
+    // Active Document Resolution: Check current document or cached conversation document
+    let activeDocText = "";
+    let activeDocName = document_name || "document.pdf";
+
     if (document) {
-      const extractedText = await extractPdfText(document);
-      const filename = document_name || "document.pdf";
-      if (extractedText) {
-        const truncated =
-          extractedText.length > 25000
-            ? extractedText.slice(0, 25000) + "\n\n...[Content truncated for length]..."
-            : extractedText;
+      activeDocText = await extractPdfText(document);
+      if (conversation_id && activeDocText) {
+        docCache.set(conversation_id, { filename: activeDocName, text: activeDocText });
+      }
+    } else if (conversation_id && docCache.has(conversation_id)) {
+      const cached = docCache.get(conversation_id)!;
+      activeDocText = cached.text;
+      activeDocName = cached.filename;
+    }
+
+    if (activeDocText) {
+      const truncated =
+        activeDocText.length > 25000
+          ? activeDocText.slice(0, 25000) + "\n\n...[Content truncated for length]..."
+          : activeDocText;
+
+      const isFirstUpload = Boolean(document);
+      if (isFirstUpload) {
         const prefix = userPromptText
           ? `User Inquiry / Instructions: "${userPromptText}"\n\n`
           : "Please provide a comprehensive, executive-level summary and professional breakdown of this document.\n\n";
-        userPromptText = `${prefix}📄 [Attached Document: "${filename}"]:\n\`\`\`text\n${truncated}\n\`\`\`\n\nPlease deliver a detailed, professional, and well-structured response based on the document above.`;
+        userPromptText = `${prefix}📄 [Attached Document: "${activeDocName}"]:\n\`\`\`text\n${truncated}\n\`\`\`\n\nPlease deliver a detailed, professional, and well-structured response based on the document above.`;
       } else {
-        userPromptText = `${userPromptText || "Please inspect this document"}\n\n[Attached Document: "${filename}" (Note: Scanned or image-only PDF with no extractable text layer)]`;
+        // Follow-up question in the same chat about the already-uploaded PDF
+        userPromptText = `📄 [Reference Document for this Chat: "${activeDocName}"]:\n\`\`\`text\n${truncated}\n\`\`\`\n\nUser Follow-up Inquiry: "${userPromptText}"\n\nPlease answer the user's inquiry thoroughly and accurately using the document text above.`;
       }
+    } else if (document && !activeDocText) {
+      userPromptText = `${userPromptText || "Please inspect this document"}\n\n[Attached Document: "${activeDocName}" (Note: Scanned or image-only PDF with no extractable text layer)]`;
     } else if (image) {
       const userInstruction = userPromptText
         ? `User Request: "${userPromptText}"\n\n`
@@ -223,6 +256,21 @@ export async function POST(req: NextRequest) {
     const messages: Array<{ role: string; content: any }> = [
       { role: "system", content: SYSTEM_PROMPT },
     ];
+
+    // Include recent conversation dialogue turns (up to 6 previous messages) for context
+    if (Array.isArray(clientHistory) && clientHistory.length > 0) {
+      const recentHistory = clientHistory.slice(-6);
+      for (const item of recentHistory) {
+        if (item.role === "user" || item.role === "assistant") {
+          // Keep content clean without re-injecting huge historical prompt strings
+          const cleanText =
+            typeof item.content === "string" ? item.content.slice(0, 2000).trim() : "";
+          if (cleanText) {
+            messages.push({ role: item.role, content: cleanText });
+          }
+        }
+      }
+    }
 
     if (image) {
       messages.push({

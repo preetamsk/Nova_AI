@@ -59,6 +59,7 @@ export default function Home() {
   const [image, setImage] = useState<string>();
   const [imageName, setImageName] = useState("");
   const [documentFile, setDocumentFile] = useState<{ name: string; data: string }>();
+  const [conversationDocs, setConversationDocs] = useState<Record<string, { name: string; data: string }>>({});
   const [preparing, setPreparing] = useState(false);
   const [sidebar, setSidebar] = useState(true);
   const [history, setHistory] = useState(false);
@@ -69,6 +70,7 @@ export default function Home() {
   const [feedback, setFeedback] = useState<Record<string, "up" | "down" | undefined>>({});
   const [copied, setCopied] = useState<string>();
 
+  const sidebarRef = useRef<HTMLElement | null>(null);
   const imagePicker = useRef<HTMLInputElement | null>(null);
   const pdfPicker = useRef<HTMLInputElement | null>(null);
   const video = useRef<HTMLVideoElement | null>(null);
@@ -98,6 +100,34 @@ export default function Home() {
     saveStoredChats(phone, newChatList);
     setConversations(newChatList.map((c) => ({ id: c.id, title: c.title, updated_at: c.updated_at })));
   };
+
+  // Close sidebar on mobile touch or outside click
+  useEffect(() => {
+    // Check initial mobile viewport
+    if (typeof window !== "undefined" && window.innerWidth <= 1040) {
+      setSidebar(false);
+    }
+
+    const handleOutsideInteraction = (e: MouseEvent | TouchEvent) => {
+      if (!sidebar) return;
+      if (typeof window !== "undefined" && window.innerWidth <= 1040) {
+        if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+          const target = e.target as HTMLElement | null;
+          if (target && target.closest('button[title="Toggle sidebar"]')) {
+            return;
+          }
+          setSidebar(false);
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideInteraction);
+    document.addEventListener("touchstart", handleOutsideInteraction, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideInteraction);
+      document.removeEventListener("touchstart", handleOutsideInteraction);
+    };
+  }, [sidebar]);
 
   // Check guest authentication on initial client mount
   useEffect(() => {
@@ -180,7 +210,12 @@ export default function Home() {
   const choosePdf = async (file?: File) => {
     if (!file) return;
     if (file.type !== "application/pdf" || file.size > 8 * 1024 * 1024) return alert("Choose a PDF smaller than 8 MB.");
-    try { setDocumentFile({ name: file.name, data: await asDataUrl(file) }); }
+    try {
+      const data = await asDataUrl(file);
+      const doc = { name: file.name, data };
+      setDocumentFile(doc);
+      setConversationDocs((prev) => ({ ...prev, [conversationId]: doc }));
+    }
     catch { alert("Unable to read this PDF."); }
   };
 
@@ -211,6 +246,11 @@ export default function Home() {
   };
 
   const clearChat = async () => {
+    setConversationDocs((prev) => {
+      const copy = { ...prev };
+      delete copy[conversationId];
+      return copy;
+    });
     if (currentUser?.phone) {
       const userChats = getStoredChats(currentUser.phone);
       const remaining = userChats.filter((c) => c.id !== conversationId);
@@ -244,11 +284,20 @@ export default function Home() {
 
   const send = async (preset?: string) => {
     const text = (preset ?? message).trim();
-    if (loading || preparing || (!text && !image && !documentFile)) return;
-    const content = text || (image ? "Please analyse this image." : "Please analyse this PDF document.");
-    const user: Message = { key: id(), role: "user", content, image, document_name: documentFile?.name };
+    const activeDoc = documentFile || conversationDocs[conversationId];
+    if (loading || preparing || (!text && !image && !activeDoc)) return;
+    const content = text || (image ? "Please analyse this image." : `Please analyse this PDF document (${activeDoc?.name || "document.pdf"}).`);
+    const user: Message = {
+      key: id(),
+      role: "user",
+      content,
+      image,
+      document_name: documentFile?.name || (activeDoc && messages.length === 0 ? activeDoc.name : undefined),
+    };
     const assistant = id();
-    const document = documentFile;
+    if (documentFile) {
+      setConversationDocs((prev) => ({ ...prev, [conversationId]: documentFile }));
+    }
     const assistantMsg: Message = { key: assistant, role: "assistant", content: "" };
     const initialItems: Message[] = [...messages, user, assistantMsg];
     setMessages(initialItems);
@@ -270,10 +319,11 @@ export default function Home() {
         body: JSON.stringify({
           conversation_id: conversationId,
           message: content,
+          messages: messages.map((m) => ({ role: m.role, content: m.content })),
           model,
           image: user.image,
-          document: document?.data,
-          document_name: document?.name,
+          document: activeDoc?.data,
+          document_name: activeDoc?.name,
           user_phone: currentUser?.phone,
           user_name: currentUser?.name,
         }),
@@ -398,7 +448,15 @@ export default function Home() {
 
   return (
     <main className="nova-shell">
-      <aside className={`sidebar ${sidebar ? "open" : ""}`}>
+      {sidebar && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setSidebar(false)}
+          onTouchStart={() => setSidebar(false)}
+          aria-hidden="true"
+        />
+      )}
+      <aside ref={sidebarRef} className={`sidebar ${sidebar ? "open" : ""}`}>
         <div className="sidebar-brand">
           <NovaMark />
           <span>NOVA AI</span>
@@ -504,7 +562,14 @@ export default function Home() {
         </div>
       </aside>
 
-      <section className="chat-panel">
+      <section
+        className="chat-panel"
+        onClick={() => {
+          if (typeof window !== "undefined" && window.innerWidth <= 1040 && sidebar) {
+            setSidebar(false);
+          }
+        }}
+      >
         <header className="topbar">
           <div className="topbar-brand">
             <NovaMark compact />

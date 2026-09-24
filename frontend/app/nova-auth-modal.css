@@ -413,3 +413,249 @@
   background: #1c1114;
 }
 
+/* ==========================================================================
+   Mobile Sidebar Backdrop with Touch Dismiss
+   ========================================================================== */
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 1040px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 11;
+    background: rgba(4, 6, 12, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+}
+
+/* ==========================================================================
+   Profile Icon & Badge Alignment (Topbar & Sidebar)
+   ========================================================================== */
+
+/* Topbar Profile Pill & Avatar */
+.topbar-actions button.topbar-user-pill {
+  width: auto !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  padding: 0 14px 0 8px !important;
+  border-radius: 9999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  border: 1px solid #282e3f !important;
+  background: #141722 !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  cursor: pointer !important;
+}
+
+.topbar-actions button.topbar-user-pill:hover {
+  border-color: #6366f1 !important;
+  background: #1c2030 !important;
+  color: #ffffff !important;
+}
+
+.topbar-actions button.topbar-user-pill .topbar-user-avatar {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4) !important;
+}
+
+.topbar-actions button.topbar-user-pill .topbar-user-name {
+  display: inline-block !important;
+  max-width: 130px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.topbar-actions button.topbar-user-pill svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  color: #818cf8 !important;
+}
+
+/* Sidebar Footer Profile Buttons Alignment */
+.sidebar-footer button.sidebar-profile-btn,
+.sidebar-footer button.sidebar-switch-profile-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 11px !important;
+  width: 100% !important;
+  padding: 10px 13px !important;
+  border-radius: 11px !important;
+  border: 1px solid #282e3f !important;
+  background: #141722 !important;
+  color: #cbd5e1 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: all 0.16s ease !important;
+  margin-bottom: 7px !important;
+}
+
+.sidebar-footer button.sidebar-profile-btn:hover {
+  background: #1c2130 !important;
+  border-color: #6366f1 !important;
+  color: #ffffff !important;
+}
+
+.sidebar-footer button.sidebar-switch-profile-btn {
+  background: #111425 !important;
+  border-color: #312e81 !important;
+  color: #c7d2fe !important;
+}
+
+.sidebar-footer button.sidebar-switch-profile-btn:hover {
+  background: #1e1b4b !important;
+  border-color: #6366f1 !important;
+  color: #ffffff !important;
+}
+
+.sidebar-footer button.sidebar-profile-btn svg,
+.sidebar-footer button.sidebar-switch-profile-btn svg {
+  width: 17px !important;
+  height: 17px !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+
+.sidebar-footer button.sidebar-profile-btn span,
+.sidebar-footer button.sidebar-switch-profile-btn span {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+/* Sidebar User Info Card Alignment */
+.sidebar-user-section {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #202430;
+}
+
+.sidebar-user-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 12px !important;
+  background: #131620 !important;
+  border: 1px solid #242938 !important;
+  border-radius: 12px !important;
+  margin-bottom: 4px !important;
+}
+
+.sidebar-user-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+  flex: 1 1 auto !important;
+  cursor: pointer !important;
+}
+
+.sidebar-user-info .topbar-user-avatar {
+  width: 28px !important;
+  height: 28px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+}
+
+.sidebar-user-info strong {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #f1f5f9 !important;
+  line-height: 1.2 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.sidebar-user-phone {
+  display: block !important;
+  font-size: 11px !important;
+  color: #818cf8 !important;
+  line-height: 1.2 !important;
+  margin-top: 2px !important;
+}
+
+/* Light Theme Overrides */
+html.nova-light .topbar-actions button.topbar-user-pill {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+html.nova-light .topbar-actions button.topbar-user-pill:hover {
+  background: #f1f5f9 !important;
+  border-color: #6366f1 !important;
+  color: #4338ca !important;
+}
+
+html.nova-light .sidebar-footer button.sidebar-profile-btn {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+html.nova-light .sidebar-footer button.sidebar-profile-btn:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html.nova-light .sidebar-footer button.sidebar-switch-profile-btn {
+  background: #eef2ff !important;
+  border-color: #c7d2fe !important;
+  color: #4338ca !important;
+}
+
+html.nova-light .sidebar-footer button.sidebar-switch-profile-btn:hover {
+  background: #e0e7ff !important;
+  border-color: #818cf8 !important;
+  color: #312e81 !important;
+}
+
+html.nova-light .sidebar-user-card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.nova-light .sidebar-user-info strong {
+  color: #0f172a !important;
+}
+
+
