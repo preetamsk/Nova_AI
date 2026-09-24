@@ -17,13 +17,12 @@ function getProviderConfig(requestedModel?: string) {
   const openAIKey = process.env.OPENAI_API_KEY;
 
   if (groqKey) {
-    let model = "llama-3.3-70b-versatile";
-    if (requestedModel) {
-      if (requestedModel.includes("llama-3.1-8b")) model = "llama-3.1-8b-instant";
-      else if (requestedModel.includes("llama-3.2-11b")) model = "llama-3.2-11b-vision-preview";
-      else if (requestedModel.includes("llama-3.3")) model = "llama-3.3-70b-versatile";
-      else if (requestedModel.includes("mixtral")) model = "mixtral-8x7b-32768";
-      else if (requestedModel.includes("gemma")) model = "gemma2-9b-it";
+    let model = "llama-3.1-8b-instant";
+    if (requestedModel && requestedModel.trim()) {
+      const clean = requestedModel.replace(/^Groq \((.*)\)$/, "$1").trim();
+      if (!clean.includes("gpt-oss") && !clean.includes("qwen") && !clean.includes("NOVA") && !clean.includes("llama-3.3-70b-versatile")) {
+        model = clean;
+      }
     }
     return {
       provider: "Groq",

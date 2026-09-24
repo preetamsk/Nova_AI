@@ -53,7 +53,7 @@ export default function Home() {
   const [conversationId, setConversationId] = useState(id);
   const [message, setMessage] = useState("");
   const [models, setModels] = useState<string[]>([]);
-  const [model, setModel] = useState("llama-3.3-70b-versatile");
+  const [model, setModel] = useState("llama-3.1-8b-instant");
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<string>();
   const [imageName, setImageName] = useState("");
