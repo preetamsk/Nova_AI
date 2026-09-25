@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+nova.db*
+
+# Environment Variables & Secrets (CRITICAL)
+.env*
+!.env.example
+
+# Logs and runtime artifacts
+*.log
+tmp/
+output/
+ollama-models/
+*.gguf
+*.bin
+
+# Backups
+*.before-*

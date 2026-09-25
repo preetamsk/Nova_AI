@@ -2,25 +2,47 @@
 node_modules/
 .next/
 out/
+build/
+dist/
 *.tsbuildinfo
 .vercel/
 
 # Python environments and bytecode
 .venv/
 venv/
+ENV/
+env/
 __pycache__/
 *.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
 
-# Local settings and secrets. Examples are safe to commit.
+# Environment Variables, Secrets & Credentials (NEVER COMMIT)
 .env
 .env.*
-!.env.example
-!frontend/.env.local.example
+*.env
+*.env.local
 *.local
+credentials.json
+token.json
+client_secret*.json
+*.pem
+*.key
+*.cert
+*.crt
 
-# Runtime data
-backend/nova.db
-backend/nova.db-*
+# Safe templates explicitly allowed
+!.env.example
+!frontend/.env.example
+!frontend/.env.local.example
+!backend/.env.example
+
+# Runtime data & SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+backend/nova.db*
 tmp/
 output/
 ollama-models/
@@ -28,12 +50,16 @@ ollama-models/
 *.bin
 
 # Editor, operating system, and log files
-.vscode/*.log
+.vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Local safety copies retained during development
+# Safety backups
 *.before-*
 *.reconstruction-backup.txt
+*.bak
