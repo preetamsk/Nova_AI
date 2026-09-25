@@ -1,67 +1,56 @@
-# NOVA AI — free local assistant with a shareable link
+# NOVA AI — Personal AI Assistant
 
-NOVA runs on this laptop using **Ollama**. It does not use OpenAI or any paid AI API. Your chat history stays in the local NOVA database, and Ollama is reachable only on `127.0.0.1`—it is never exposed to the internet.
+NOVA is an advanced personal AI assistant featuring real-time streaming, multimodal image vision analysis, PDF document comprehension, and responsive Markdown rendering with table support.
 
-## Start NOVA
+---
 
-Open three PowerShell windows.
+## 🌐 Live Production Application
+
+The app is deployed and live 24/7 on Vercel:
+
+👉 **[https://frontend-six-beta-80.vercel.app](https://frontend-six-beta-80.vercel.app)**
+
+- **No installation needed:** Open the link in any mobile or desktop browser.
+- **24/7 Availability:** Runs entirely on serverless cloud infrastructure without requiring your computer to stay on.
+- **Full Privacy:** Chat history is stored locally on the user's device browser; no shared database.
+
+---
+
+## 🚀 Features
+
+- **Document Analysis:** Upload PDFs to extract text, summarize, and ask follow-up questions across multiple conversation turns.
+- **Multimodal Vision:** Upload or capture photos with your camera for structured visual breakdowns.
+- **Formatted Markdown & Tables:** Clean GitHub-flavored Markdown rendering with responsive tables, zebra striping, and code copy buttons.
+- **Dark & Light Modes:** Tailored color palettes with instant theme switching.
+- **Profile Customization:** Personalized greetings and guest verification.
+
+---
+
+## 🛠️ Local Development (Optional)
+
+To run the full stack locally on your computer:
 
 ```powershell
-# Window 1 — only needed if Ollama is not already running
+# 1. Run local Ollama (if using local offline models)
 ollama serve
+
+# 2. Run Python FastAPI Backend (Port 8000)
+cd backend
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app:app --port 8000 --reload
+
+# 3. Run Next.js Frontend (Port 3000)
+cd frontend
+npm install
+npm run dev
 ```
 
-```powershell
-# Window 2 — NOVA backend
-cd E:\Nova_AI
-.\start-backend.bat
-```
+Open [http://localhost:3000](http://localhost:3000).
 
-```powershell
-# Window 3 — NOVA frontend
-cd E:\Nova_AI
-.\start-frontend.bat
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) to use NOVA on this laptop.
+## ℹ️ Note on Tailscale Link
 
-## Share NOVA with a friend
-
-NOVA has a free HTTPS share link:
-
-[https://preethu.tailff2d27.ts.net/](https://preethu.tailff2d27.ts.net/)
-
-Before sharing, make sure the three NOVA services above are running. Then check or re-enable the public link with:
-
-```powershell
-cd E:\Nova_AI
-powershell -ExecutionPolicy Bypass -File .\share-nova.ps1
-```
-
-Your friend only opens the link in a browser—no NOVA, Ollama, model, or other installation is needed. Your laptop must remain powered on, connected to the internet, and running NOVA while they use it.
-
-Keep the link limited to people you trust. It is public to anyone who has it and uses your laptop's model capacity.
-
-## Stop sharing and shut down
-
-To remove the public link while keeping local NOVA available:
-
-```powershell
-cd E:\Nova_AI
-powershell -ExecutionPolicy Bypass -File .\share-nova.ps1 -Stop
-```
-
-To stop NOVA completely, press `Ctrl + C` in the backend and frontend PowerShell windows. You can also close Ollama if you do not need it.
-
-## Verify the project
-
-```powershell
-cd E:\Nova_AI\backend
-.\.venv\Scripts\python.exe -m pytest tests -q
-
-cd E:\Nova_AI\frontend
-npm run build
-npm run lint
-```
-
-The current checks cover private browser histories, visible streaming errors, upload validation, CORS, low-memory local settings, the production frontend build, and a real streamed Ollama reply through the public link.
+The old URL `https://preethu.tailff2d27.ts.net/` was a temporary local Tailscale Funnel that required your laptop to remain awake and running `uvicorn` on port 8000. It has been replaced by the permanent 24/7 production URL at **[https://frontend-six-beta-80.vercel.app](https://frontend-six-beta-80.vercel.app)**.
